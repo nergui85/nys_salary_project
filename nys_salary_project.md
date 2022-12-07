@@ -42,3 +42,50 @@ scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
+
+``` r
+ payroll_data = 
+    read_csv("data/Citywide_Payroll_Data__Fiscal_Year_.csv") %>% 
+    clean_names() %>%
+    filter(fiscal_year == "2022",
+           work_location_borough != "NA",
+           work_location_borough != "OTHER", 
+           leave_status_as_of_june_30 != "ON SEPARATION LEAVE",
+           leave_status_as_of_june_30 != "SEASONAL") %>%
+       separate(agency_start_date, into = c("month", "day", "start_year"), convert = TRUE) %>% 
+      mutate(leave_status = leave_status_as_of_june_30,
+             pay_basis = recode(pay_basis, "per Annum" = "Annually"),
+             pay_basis = recode(pay_basis, "per Day" = "Daily"),
+             pay_basis = recode(pay_basis, "per Hour" = "Hourly"),
+             county_name = work_location_borough,
+             county_name = recode(county_name, "MANHATTAN" = "NEW YORK"),
+             county_name = recode(county_name, "BROOKLYN" = "KINGS")) %>% select(-payroll_number, -first_name, -last_name, -mid_init, -month, -day, -title_description, -leave_status_as_of_june_30, -regular_hours, -ot_hours, -regular_gross_paid, -work_location_borough) %>% 
+    mutate(county_name = as.factor(county_name),
+           pay_basis = as.factor(pay_basis),
+           leave_status = as.factor(leave_status))
+```
+
+    ## Rows: 5109775 Columns: 17
+    ## ── Column specification ────────────────────────────────────────────────────────
+    ## Delimiter: ","
+    ## chr (9): Agency Name, Last Name, First Name, Mid Init, Agency Start Date, Wo...
+    ## dbl (2): Fiscal Year, Payroll Number
+    ## 
+    ## ℹ Use `spec()` to retrieve the full column specification for this data.
+    ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+
+``` r
+head(payroll_data)
+```
+
+    ## # A tibble: 6 × 9
+    ##   fiscal_year agency_n…¹ start…² base_…³ pay_b…⁴ total…⁵ total…⁶ leave…⁷ count…⁸
+    ##         <dbl> <chr>        <int>   <dbl> <fct>     <dbl>   <dbl> <fct>   <fct>  
+    ## 1        2022 DEPT OF E…    1988  128409 Annual…       0   8259. CEASED  NEW YO…
+    ## 2        2022 DEPT OF E…    2015   97469 Annual…       0   1486. ACTIVE  NEW YO…
+    ## 3        2022 DEPT OF E…    2000  169456 Annual…       0  16947. ACTIVE  NEW YO…
+    ## 4        2022 DEPT OF E…    2000   92906 Annual…       0   4426. CEASED  NEW YO…
+    ## 5        2022 DEPT OF E…    2007  100351 Annual…       0   4852. ACTIVE  NEW YO…
+    ## 6        2022 DEPT OF E…    2022   69866 Annual…       0   2801. ACTIVE  NEW YO…
+    ## # … with abbreviated variable names ¹​agency_name, ²​start_year, ³​base_salary,
+    ## #   ⁴​pay_basis, ⁵​total_ot_paid, ⁶​total_other_pay, ⁷​leave_status, ⁸​county_name
