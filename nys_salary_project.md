@@ -7,9 +7,9 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.4 
+    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
+    ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
@@ -25,6 +25,12 @@ library(janitor)
     ## The following objects are masked from 'package:stats':
     ## 
     ##     chisq.test, fisher.test
+
+``` r
+library(viridis)
+```
+
+    ## Loading required package: viridisLite
 
 ``` r
 knitr::opts_chunk$set(
@@ -69,7 +75,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (9): Agency Name, Last Name, First Name, Mid Init, Agency Start Date, Wo...
-    ## dbl (2): Fiscal Year, Payroll Number
+    ## dbl (8): Fiscal Year, Payroll Number, Base Salary, Regular Hours, Regular Gr...
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -89,3 +95,43 @@ head(payroll_data)
     ## 6        2022 DEPT OF E…    2022   69866 Annual…       0   2801. ACTIVE  NEW YO…
     ## # … with abbreviated variable names ¹​agency_name, ²​start_year, ³​base_salary,
     ## #   ⁴​pay_basis, ⁵​total_ot_paid, ⁶​total_other_pay, ⁷​leave_status, ⁸​county_name
+
+\#Varvy’s visualizations \#Pie Chart for the percentages and numbers of
+the different leave statuses
+
+``` r
+Total_ls = table(pull(payroll_data,leave_status))
+
+Total_ls
+```
+
+    ## 
+    ##   ACTIVE   CEASED ON LEAVE 
+    ##   481788   102364    10093
+
+``` r
+labels = c("Active", "Ceased", "On Leave")
+
+piepercent = round(100 * Total_ls / sum(Total_ls), 1)
+
+par(xpd = TRUE) 
+pie(Total_ls, labels = paste(labels, sep = " ", piepercent, "%"),
+    main = "Percentages of Municipal Employees by Leave Status", col = viridis(length(Total_ls)))
+legend("topright", c("Active", "Ceased", "On Leave"),cex = 0.9, fill = viridis(length(Total_ls)))
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
+
+\#Bar Graph for number of employees by municipality separated by leave
+status
+
+``` r
+Ls_bar = payroll_data %>%
+  group_by(leave_status) %>%
+  summarise(
+    count = n())
+
+ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + geom_bar(position = "dodge", stat = "identity") + labs(title = "The Number of Employees by Municipality Separated  by Leave Status", x = "Leave Status", y = "Number of Employees") + scale_y_continuous(labels = scales::comma)
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />

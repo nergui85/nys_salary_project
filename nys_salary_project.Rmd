@@ -7,6 +7,7 @@ output: github_document
 ```{r}
 library(tidyverse)
 library(janitor)
+library(viridis)
 knitr::opts_chunk$set(
 	echo = TRUE,
 	warning = FALSE,
@@ -47,3 +48,34 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 head(payroll_data)
 ```
 
+#Varvy's visualizations
+#Pie Chart for the percentages and numbers of the different leave statuses
+
+```{r}
+
+Total_ls = table(pull(payroll_data,leave_status))
+
+Total_ls
+
+
+labels = c("Active", "Ceased", "On Leave")
+
+piepercent = round(100 * Total_ls / sum(Total_ls), 1)
+
+par(xpd = TRUE) 
+pie(Total_ls, labels = paste(labels, sep = " ", piepercent, "%"),
+    main = "Percentages of Municipal Employees by Leave Status", col = viridis(length(Total_ls)))
+legend("topright", c("Active", "Ceased", "On Leave"),cex = 0.9, fill = viridis(length(Total_ls)))
+```
+
+#Bar Graph for number of employees by municipality separated by leave status
+```{r}
+
+Ls_bar = payroll_data %>%
+  group_by(leave_status) %>%
+  summarise(
+    count = n())
+
+ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + geom_bar(position = "dodge", stat = "identity") + labs(title = "The Number of Employees by Municipality Separated  by Leave Status", x = "Leave Status", y = "Number of Employees") + scale_y_continuous(labels = scales::comma)
+
+```
