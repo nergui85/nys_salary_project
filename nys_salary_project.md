@@ -9,7 +9,7 @@ library(tidyverse)
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
     ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
+    ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
@@ -55,9 +55,11 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
     clean_names() %>%
     filter(fiscal_year == "2022",
            work_location_borough != "NA",
-           work_location_borough != "OTHER", 
+           work_location_borough != "OTHER",
+           work_location_borough != "WASHINGTON DC",
            leave_status_as_of_june_30 != "ON SEPARATION LEAVE",
-           leave_status_as_of_june_30 != "SEASONAL") %>%
+           leave_status_as_of_june_30 != "SEASONAL",
+           title_description != "NA") %>%
        separate(agency_start_date, into = c("month", "day", "start_year"), convert = TRUE) %>% 
       mutate(leave_status = leave_status_as_of_june_30,
              pay_basis = recode(pay_basis, "per Annum" = "Annually"),
@@ -65,17 +67,21 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
              pay_basis = recode(pay_basis, "per Hour" = "Hourly"),
              county_name = work_location_borough,
              county_name = recode(county_name, "MANHATTAN" = "NEW YORK"),
-             county_name = recode(county_name, "BROOKLYN" = "KINGS")) %>% select(-payroll_number, -first_name, -last_name, -mid_init, -month, -day, -title_description, -leave_status_as_of_june_30, -regular_hours, -ot_hours, -regular_gross_paid, -work_location_borough) %>% 
+             county_name = recode(county_name, "BROOKLYN" = "KINGS",
+             job_title = title_description)) %>% 
+    select(-payroll_number, -first_name, -last_name, -mid_init, -month, -day, -leave_status_as_of_june_30, -regular_hours, -ot_hours, -regular_gross_paid, -work_location_borough) %>% 
     mutate(county_name = as.factor(county_name),
            pay_basis = as.factor(pay_basis),
-           leave_status = as.factor(leave_status))
+           leave_status = as.factor(leave_status),
+           job_title = title_description) %>%
+  select(-title_description)
 ```
 
     ## Rows: 5109775 Columns: 17
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (9): Agency Name, Last Name, First Name, Mid Init, Agency Start Date, Wo...
-    ## dbl (8): Fiscal Year, Payroll Number, Base Salary, Regular Hours, Regular Gr...
+    ## dbl (2): Fiscal Year, Payroll Number
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -84,7 +90,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 head(payroll_data)
 ```
 
-    ## # A tibble: 6 × 9
+    ## # A tibble: 6 × 10
     ##   fiscal_year agency_n…¹ start…² base_…³ pay_b…⁴ total…⁵ total…⁶ leave…⁷ count…⁸
     ##         <dbl> <chr>        <int>   <dbl> <fct>     <dbl>   <dbl> <fct>   <fct>  
     ## 1        2022 DEPT OF E…    1988  128409 Annual…       0   8259. CEASED  NEW YO…
@@ -93,8 +99,9 @@ head(payroll_data)
     ## 4        2022 DEPT OF E…    2000   92906 Annual…       0   4426. CEASED  NEW YO…
     ## 5        2022 DEPT OF E…    2007  100351 Annual…       0   4852. ACTIVE  NEW YO…
     ## 6        2022 DEPT OF E…    2022   69866 Annual…       0   2801. ACTIVE  NEW YO…
-    ## # … with abbreviated variable names ¹​agency_name, ²​start_year, ³​base_salary,
-    ## #   ⁴​pay_basis, ⁵​total_ot_paid, ⁶​total_other_pay, ⁷​leave_status, ⁸​county_name
+    ## # … with 1 more variable: job_title <chr>, and abbreviated variable names
+    ## #   ¹​agency_name, ²​start_year, ³​base_salary, ⁴​pay_basis, ⁵​total_ot_paid,
+    ## #   ⁶​total_other_pay, ⁷​leave_status, ⁸​county_name
 
 \#Varvy’s visualizations \#Pie Chart for the percentages and numbers of
 the different leave statuses
@@ -107,7 +114,7 @@ Total_ls
 
     ## 
     ##   ACTIVE   CEASED ON LEAVE 
-    ##   481788   102364    10093
+    ##   481781   102360    10093
 
 ``` r
 labels = c("Active", "Ceased", "On Leave")
@@ -135,3 +142,97 @@ ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + geom_bar
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />
+
+# Justin’s Visualizations
+
+## First Plot - Mean Base Salary By New York Counties
+
+``` r
+mean_base_salary_plot =
+  payroll_data %>%
+  group_by(county_name) %>%
+  summarize(
+      mean_base_salary = mean(base_salary, na.rm = TRUE)) %>%
+        ggplot(aes(x = reorder(county_name, mean_base_salary), y = mean_base_salary, fill = county_name)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  scale_y_continuous(
+      labels = scales::comma) +
+  labs(
+    x = "County Names",
+    y = "Mean Base Salary",
+    title = "The Average Base Salary for Municipal Employees of New York State By County",
+    fill = "New York State County Names"
+  ) + 
+  theme(axis.text.x = element_text(angle = 80, vjust = 0.5, hjust = 0.50)) 
+
+mean_base_salary_plot
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-5-1.png" width="90%" />
+
+## Second Plot - Total Other Pay by New York Counties
+
+``` r
+median_tibble =
+  payroll_data %>%
+  group_by(county_name) %>%
+  summarise(median_total_other_pay = median(total_other_pay))
+median_other_pay_plot =
+  payroll_data %>%
+  left_join(median_tibble, by = "county_name") %>%
+        ggplot(aes(x = reorder(county_name, median_total_other_pay), y = total_other_pay, fill = county_name)) +
+  geom_boxplot() +
+    scale_y_continuous(
+      labels = scales::comma,
+    limits = c(-20000, 40000),
+    breaks = seq(-20000, 40000, by = 10000)) +
+  labs(
+    x = "County Names",
+    y = "Median Total Other Types of Pay",
+    title = "The Median Total Other Pay for Municipal Employees of New York State By County",
+    fill = "New York State County Names"
+  ) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)) 
+
+median_other_pay_plot
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-6-1.png" width="90%" />
+
+``` r
+#Fix reordering of boxplots
+```
+
+## Third Plot - Total Number of Job Titles by New York Counties
+
+``` r
+number_job_titles_plot =
+  payroll_data %>%
+  group_by(county_name, job_title) %>%
+  summarise(count = n()) %>%
+  ungroup() %>% 
+  group_by(county_name) %>%
+  summarise(count = n()) %>%
+        ggplot(aes(x = reorder(county_name, count), y = count, fill = county_name)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  scale_y_continuous(
+      labels = scales::comma,
+    limits = c(0, 1500),
+    breaks = seq(0, 1500, by = 250)) +
+  labs(
+    x = "County Names",
+    y = "Number of Job Titles",
+    title = "The Number of Job Titles Held By Municipal Employees of New York State By County",
+    fill = "New York State County Names"
+  ) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+```
+
+    ## `summarise()` has grouped output by 'county_name'. You can override using the
+    ## `.groups` argument.
+
+``` r
+number_job_titles_plot
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-7-1.png" width="90%" />
