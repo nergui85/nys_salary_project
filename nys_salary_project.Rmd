@@ -22,6 +22,7 @@ options(
 scale_colour_discrete = scale_colour_viridis_d
 scale_fill_discrete = scale_fill_viridis_d
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
 ```
 
 ```{r}
@@ -167,14 +168,17 @@ number_job_titles_plot
 ```
 
 # Nergui's Visualization 
-# First boxplotfor overtime pay by municipality
+# First boxplot for overtime pay by county
 
 ```{r}
-
-overtime = 
-    payroll_data %>%
-  group_by(county_name) %>% 
-    ggplot(aes(x = reorder(county_name, total_ot_paid), y = total_ot_paid, fill = county_name)) +
+overtime_tibble = payroll_data %>% 
+    group_by(county_name) %>% 
+    summarise(median_total_ot_paid = median(total_ot_paid))
+    
+median_ot_paid_plot = 
+    payroll_data |> 
+    left_join(overtime_tibble, by = "county_name") |> 
+    ggplot(aes(x = reorder(county_name, median_total_ot_paid ), y = total_ot_paid, fill = county_name)) +
     geom_boxplot() +
      scale_y_continuous(
       labels = scales::comma,
@@ -186,16 +190,25 @@ overtime =
     title = "Total Overtime Paid By Each County",
     fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+
+median_ot_paid_plot
+
 ```
 
 # Second Boxplot for Median base salary by pay basis by county (Annually)
 
 ```{r}
-Pay_basis_annually = 
+pay_basis_tibble = 
     payroll_data %>%
     filter(pay_basis == "Annually") |> 
     group_by(county_name) %>% 
-    ggplot(aes(x = reorder(county_name, base_salary), y = base_salary, fill = county_name)) +
+    summarise(median_base_salary = median(base_salary))
+
+Median_base_salary_plot_annually =
+    payroll_data %>%
+    left_join(pay_basis_tibble, by = "county_name") %>%
+    ggplot(aes(x = reorder(county_name, median_base_salary), y = base_salary, fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -207,16 +220,23 @@ Pay_basis_annually =
     title = "Annual Median Base Salary For Each County", 
     fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+Median_base_salary_plot_annually
 ```
 
 # Daily 
 
 ```{r}
-Pay_basis_daily = 
+pay_basis_daily_tibble = 
     payroll_data %>%
     filter(pay_basis == "Daily") |> 
-    group_by(county_name) %>% 
-    ggplot(aes(x = reorder(county_name, base_salary), y = base_salary, fill = county_name)) +
+    group_by(county_name) |> 
+    summarise(median_base_salary_daily = median(base_salary))
+
+Median_base_salary_plot_daily =
+    payroll_data %>%
+    left_join(pay_basis_daily_tibble,  by = "county_name") %>%
+    ggplot(aes(x = reorder(county_name, median_base_salary_daily) , y = base_salary, fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -228,16 +248,23 @@ Pay_basis_daily =
     title = "Daily Median Base Salary For Each County", 
     fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+Median_base_salary_plot_daily
 ```
 
 # Hourly
 
 ```{r}
-Pay_basis_hourly = 
+pay_basis_hourly_tibble= 
     payroll_data %>%
     filter(pay_basis == "Hourly") |> 
-    group_by(county_name) %>% 
-    ggplot(aes(x = reorder(county_name, base_salary), y = base_salary, fill = county_name)) +
+    group_by(county_name) %>%
+    summarise(median_base_salary_hourly = median(base_salary))
+
+Median_base_salary_plot_hourly =
+    payroll_data %>%
+    left_join(pay_basis_hourly_tibble,  by = "county_name") %>%
+    ggplot(aes(x = reorder(county_name, median_base_salary_hourly), y = base_salary, fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -249,16 +276,23 @@ Pay_basis_hourly =
     title = "Hourly Median Base Salary For Each County",
      fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+Median_base_salary_plot_hourly
 ```
 
 # Prorated 
 
 ```{r}
-Pay_basis_Prorated_Annual = 
+pay_basis_prorated_tibble = 
     payroll_data %>%
     filter(pay_basis == "Prorated Annual") |> 
-    group_by(county_name) %>% 
-    ggplot(aes(x = reorder(county_name, base_salary), y = base_salary, fill = county_name)) +
+    group_by(county_name) %>%
+    summarise(median_base_salary_prorated = median(base_salary))  
+    
+Median_base_salary_plot_prorated =
+    payroll_data %>%
+    left_join(pay_basis_prorated_tibble,  by = "county_name") %>%   
+    ggplot(aes(x = reorder(county_name, median_base_salary_prorated), y = base_salary, fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -269,6 +303,9 @@ Pay_basis_Prorated_Annual =
     y = " Base Salary",
     title = "Prorated Annual Median Base Salary For Each County",
     fill = "New York State County Names"
-  ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+  ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+
+
+Median_base_salary_plot_prorated
 ```
 
