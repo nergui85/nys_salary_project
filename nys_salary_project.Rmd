@@ -6,6 +6,7 @@ output: github_document
 
 ```{r}
 library(tidyverse)
+
 library(janitor)
 library(viridis)
 knitr::opts_chunk$set(
@@ -270,5 +271,45 @@ Pay_basis_Prorated_Annual =
     title = "Prorated Annual Median Base Salary For Each County",
     fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+```
+
+# Plot for Top 10 Job Titles Throughout the New York State Counties
+```{r}
+job_frequency =
+payroll_data %>%
+    group_by(county_name, job_title) %>%
+    summarise(job_frequency = n()) %>%
+    arrange(desc(job_frequency)) %>%
+    ungroup()
+
+job_frequency_data = 
+    job_frequency %>%
+    top_n(job_frequency, n = 10) %>%
+    mutate(
+     job_title = recode(job_title, "TEACHER- PER SESSION" = "TEACHER PER SESSION"),
+     job_title = recode(job_title, "ANNUAL ED PARA" = "EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "TEACHER SPECIAL EDUCATION" = "SPECIAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "TEACHER-GENERAL ED" = "GENERAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "SUBSTITUTE ED PARA" = "SUBSTITUTE EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "F/T SCHOOL AIDE" = "SCHOOL AIDE"))
+    
+job_frequency_plot =
+    job_frequency_data %>%
+    ggplot(aes(x = reorder(job_title, job_frequency), y = job_frequency, fill = county_name)) +
+  geom_bar(position = "dodge", stat = "identity") + 
+    scale_y_continuous(
+      labels = scales::comma,
+    limits = c(0, 120000),
+    breaks = seq(0, 120000, by = 10000)) +
+  labs(
+    x = "Top 10 Job Titles",
+    y = "Frequency of Job Titles",
+    title = "The Top 10 Job Titles Held By Municipal Employees Throughout the Counties in New York State",
+    fill = "New York State County Names"
+  ) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+job_frequency_plot
+  
 ```
 
