@@ -88,6 +88,35 @@ ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + geom_bar
 
 ```
 
+#Varvara & Justin - Statistical Analysis(ANOVA and Tukey Test)
+```{r}
+#Performing the ANOVA tests to determine significant difference in the means of total pay among municipal employees by county in 2022
+
+Null Hypothesis(Ho) = The mean base salary is constant for all counties
+H1 = The mean base salary is different for all municipalities
+```{r}
+bs_model = payroll_data %>%
+  mutate(county_name = as.factor(county_name)) %>%
+  group_by(county_name) %>%
+  summarise(bs_mean = base_salary)
+
+
+res = lm(bs_mean ~ factor(county_name), data = bs_model)
+res
+anova(res) %>% broom::tidy() %>% knitr::kable(caption = "One Way Anova Test for Mean Salary by County")
+```
+
+
+#Tukey test for Mean Salary by County
+```{r}
+res1 = aov(bs_mean ~ factor(county_name), data = bs_model)
+Tukey_bs = TukeyHSD(res1)
+Tukey_bs
+
+Tukey_bs %>%broom::tidy() %>% knitr::kable(caption = "Tukey Test for Mean Salary by County")
+
+```
+
 # Justin's Visualizations
 
 ## First Plot - Mean Base Salary By New York Counties
