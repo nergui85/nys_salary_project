@@ -588,7 +588,6 @@ Median total overtime pay for municipal employees in New York State by its count
  
  
 Furthermore, an exploratory analysis on top jobs for New York County and Anbany was conducted to comprehend our earlier analysis on Mean base salary where New York county ranked second lowest  from mean base salary while Albany ranked highest (Fig1). We assumed that the top ten job titles would explain this finding. Based on Figure 6,7 , the top ten job titles in New York County are community associate, school aide, police officer, substitute education, election worker, teacher and Teacher Per Session. However, there were only 6 top titles in Albany, which are supervisor, assistant director, special assistant, watershed maintainer, assistant legislative representative. As we expected these top job titles explained our main finding on mean salary that top 6 job titles were higher rank jobs as compared to New York County. 
->>>>>>> 7493292bacf9b25808d1d78b163e9b5631ff79ad
 
 Additional Analysis:
 

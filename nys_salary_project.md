@@ -9,7 +9,7 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
     ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
@@ -1184,8 +1184,7 @@ Session. However, there were only 6 top titles in Albany, which are
 supervisor, assistant director, special assistant, watershed maintainer,
 assistant legislative representative. As we expected these top job
 titles explained our main finding on mean salary that top 6 job titles
-were higher rank jobs as compared to New York County. \>\>\>\>\>\>\>
-7493292bacf9b25808d1d78b163e9b5631ff79ad
+were higher rank jobs as compared to New York County.
 
 Additional Analysis:
 
