@@ -557,7 +557,7 @@ number_job_titles_plot
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
 
-# Mean Overtime Paid By New York State Counties Plot
+# Median Overtime Paid By New York State Counties Plot
 
 ``` r
 overtime_tibble = 
