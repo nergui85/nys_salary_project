@@ -9,9 +9,9 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
+    ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
@@ -89,7 +89,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (9): Agency Name, Last Name, First Name, Mid Init, Agency Start Date, Wo...
-    ## dbl (8): Fiscal Year, Payroll Number, Base Salary, Regular Hours, Regular Gr...
+    ## dbl (2): Fiscal Year, Payroll Number
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -557,19 +557,19 @@ number_job_titles_plot
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
 
-# Nergui’s Visualization
-
-# First boxplot for overtime pay by county
+# Mean Overtime Paid By New York State Counties Plot
 
 ``` r
-overtime_tibble = payroll_data %>% 
+overtime_tibble = 
+    payroll_data %>% 
     group_by(county_name) %>% 
     summarise(median_total_ot_paid = median(total_ot_paid))
-    
+
 median_ot_paid_plot = 
     payroll_data |> 
     left_join(overtime_tibble, by = "county_name") |> 
-    ggplot(aes(x = reorder(county_name, median_total_ot_paid ), y = total_ot_paid, fill = county_name)) +
+    ggplot(aes(x = reorder(county_name, median_total_ot_paid ), y = total_ot_paid,
+               fill = county_name)) +
     geom_boxplot() +
      scale_y_continuous(
       labels = scales::comma,
@@ -580,7 +580,8 @@ median_ot_paid_plot =
     y = "Total Overtime Paid",
     title = "Total Overtime Paid By Each County",
     fill = "New York State County Names"
-  ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+  ) + 
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
 
 median_ot_paid_plot
@@ -588,7 +589,7 @@ median_ot_paid_plot
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
 
-# Second Boxplot for Median base salary by pay basis by county (Annually)
+# Median Base Salary By Pay basis By New York State Counties (Annually) Plot
 
 ``` r
 pay_basis_tibble = 
@@ -599,8 +600,10 @@ pay_basis_tibble =
 
 Median_base_salary_plot_annually =
     payroll_data %>%
+    filter(pay_basis == "Annually") |> 
     left_join(pay_basis_tibble, by = "county_name") %>%
-    ggplot(aes(x = reorder(county_name, median_base_salary), y = base_salary, fill = county_name)) +
+    ggplot(aes(x = reorder(county_name, median_base_salary), y = base_salary, 
+               fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -618,7 +621,7 @@ Median_base_salary_plot_annually
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-11-1.png" width="90%" />
 
-# Daily
+# Median Base Salary By Pay basis By New York State Counties (Daily) Plot
 
 ``` r
 pay_basis_daily_tibble = 
@@ -629,8 +632,10 @@ pay_basis_daily_tibble =
 
 Median_base_salary_plot_daily =
     payroll_data %>%
+    filter(pay_basis == "Daily") |> 
     left_join(pay_basis_daily_tibble,  by = "county_name") %>%
-    ggplot(aes(x = reorder(county_name, median_base_salary_daily) , y = base_salary, fill = county_name)) +
+    ggplot(aes(x = reorder(county_name, median_base_salary_daily) , 
+               y = base_salary, fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -648,7 +653,7 @@ Median_base_salary_plot_daily
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-12-1.png" width="90%" />
 
-# Hourly
+# Median Base Salary By Pay basis By New York State Counties (Hourly) Plot
 
 ``` r
 pay_basis_hourly_tibble= 
@@ -659,8 +664,10 @@ pay_basis_hourly_tibble=
 
 Median_base_salary_plot_hourly =
     payroll_data %>%
+    filter(pay_basis == "Hourly") |> 
     left_join(pay_basis_hourly_tibble,  by = "county_name") %>%
-    ggplot(aes(x = reorder(county_name, median_base_salary_hourly), y = base_salary, fill = county_name)) +
+    ggplot(aes(x = reorder(county_name, median_base_salary_hourly), 
+               y = base_salary, fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -678,7 +685,7 @@ Median_base_salary_plot_hourly
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-13-1.png" width="90%" />
 
-# Prorated
+# Median Base Salary By Pay basis By New York State Counties (Prorated) Plot
 
 ``` r
 pay_basis_prorated_tibble = 
@@ -689,8 +696,10 @@ pay_basis_prorated_tibble =
     
 Median_base_salary_plot_prorated =
     payroll_data %>%
+    filter(pay_basis == "Prorated Annual") |>
     left_join(pay_basis_prorated_tibble,  by = "county_name") %>%   
-    ggplot(aes(x = reorder(county_name, median_base_salary_prorated), y = base_salary, fill = county_name)) +
+    ggplot(aes(x = reorder(county_name, median_base_salary_prorated), 
+               y = base_salary, fill = county_name)) +
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -796,3 +805,99 @@ top_plot
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
+
+# Plot for Top 10 Job Titles Throughout the New York County
+
+``` r
+job_frequency_newyork =
+payroll_data %>%
+    filter(county_name == "NEW YORK") |> 
+    group_by(county_name, job_title) %>%
+    summarise(job_frequency = n()) %>%
+    arrange(desc(job_frequency)) %>%
+    ungroup()
+```
+
+    ## `summarise()` has grouped output by 'county_name'. You can override using the
+    ## `.groups` argument.
+
+``` r
+job_frequency_newyork_data = 
+    job_frequency_newyork %>%
+    top_n(job_frequency, n = 10) %>%
+    mutate(
+     job_title = recode(job_title, "TEACHER- PER SESSION" = "TEACHER PER SESSION"),
+     job_title = recode(job_title, "ANNUAL ED PARA" = "EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "TEACHER SPECIAL EDUCATION" = "SPECIAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "TEACHER-GENERAL ED" = "GENERAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "SUBSTITUTE ED PARA" = "SUBSTITUTE EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "F/T SCHOOL AIDE" = "SCHOOL AIDE"))
+    
+job_frequency_newyork_plot =
+    job_frequency_newyork_data %>%
+    ggplot(aes(x = reorder(job_title, job_frequency), y = job_frequency, fill = county_name)) +
+  geom_bar(position = "dodge", stat = "identity") + 
+    scale_y_continuous(
+      labels = scales::comma,
+    limits = c(0, 120000),
+    breaks = seq(0, 120000, by = 10000)) +
+  labs(
+    x = "Top 10 Job Titles",
+    y = "Frequency of Job Titles",
+    title = "The Top 10 Job Titles Held By Municipal Employees in New York County",
+    fill = "New York State County Names"
+  ) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+job_frequency_newyork_plot
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-17-1.png" width="90%" />
+
+# Plot for Top 10 Job Titles Throughout Albany County
+
+``` r
+job_frequency_albany =
+payroll_data %>%
+    filter(county_name == "ALBANY") |> 
+    group_by(county_name, job_title) %>%
+    summarise(job_frequency = n()) %>%
+    arrange(desc(job_frequency)) %>%
+    ungroup()
+```
+
+    ## `summarise()` has grouped output by 'county_name'. You can override using the
+    ## `.groups` argument.
+
+``` r
+job_frequency_albany_data = 
+    job_frequency_albany %>%
+    top_n(job_frequency, n = 10) %>%
+    mutate(
+     job_title = recode(job_title, "TEACHER- PER SESSION" = "TEACHER PER SESSION"),
+     job_title = recode(job_title, "ANNUAL ED PARA" = "EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "TEACHER SPECIAL EDUCATION" = "SPECIAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "TEACHER-GENERAL ED" = "GENERAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "SUBSTITUTE ED PARA" = "SUBSTITUTE EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "F/T SCHOOL AIDE" = "SCHOOL AIDE"))
+    
+job_frequency_albany_plot =
+    job_frequency_albany_data %>%
+    ggplot(aes(x = reorder(job_title, job_frequency), y = job_frequency, fill = county_name)) +
+  geom_bar(position = "dodge", stat = "identity") + 
+    scale_y_continuous(
+      labels = scales::comma,
+    limits = c(0, 5),
+    breaks = seq(0, 5, by = 1)) +
+  labs(
+    x = "Top 10 Job Titles",
+    y = "Frequency of Job Titles",
+    title = "The Top 10 Job Titles Held By Municipal Employeesin Albany County",
+    fill = "New York State County Names"
+  ) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+job_frequency_albany_plot
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-18-1.png" width="90%" />
