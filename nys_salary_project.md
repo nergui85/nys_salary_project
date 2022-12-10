@@ -1045,3 +1045,34 @@ sums, meal allowance, settlement amounts, differentials, uniform
 allowance, retroactive pay increases, and bonus pay. These other forms
 of payment would explain why there are negative values for this
 variable.
+
+Additional Analysis:
+
+For additional analysis, an ANOVA was done to determine whether there is
+a significant difference in mean base salary for municipal workers
+between the counties in New York State in 2022. The null hypothesis for
+this test is that all the base salary means for each county are equal.
+The alternative hypothesis is that not all the base salary means for
+each county are equal. The level of significance for this test is 0.05.
+The p-value for this test is 0 (Table 1). Based on the results of this
+F-test, at a level of significance of 0.05, we reject the null
+hypothesis as there is enough evidence to support that not all the base
+salary means for each county are equal.
+
+As an ANOVA does not indicate which base salary means are different and
+we need to control and preserve the overall family-wise error rate at
+the pre-specified alpha level of 0.05, we have also conducted a Tukey’s
+test. Based on Table 2, the following county comparisons have
+significant differences in mean salary for municipal workers in 2022 as
+the p-values are less than 0.05 and the null value of 0 is not included
+within the corresponding confidence interval: Bronx and Albany, Nassau
+and Albany, New York and Albany, Richmond and Albany, Kings and Bronx,
+New York and Bronx, Queens and Bronx, Richmond and Bronx, Sullivan and
+Bronx, Ulster and Bronx, Westchester and Bronx, Nassau and Delaware, New
+York and Delaware, Nassau and Kings, New York and Kings, Richmond and
+Kings, Ulster and Kings, Westchester and Kings, Queens and Nassau,
+Richmond and Nassau, Sullivan and Nassau, Ulster and Nassau, Westchester
+and Nassau, Queens and New York, Richmond and New York, Sullivan and New
+York, Ulster and New York, Westchester and New York, Ulster and Queens,
+Westchester and Queens, Ulster and Richmond, and Westchester and
+Richmond.
