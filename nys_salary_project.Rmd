@@ -556,6 +556,27 @@ https://www.bls.gov/regions/new-york-new-jersey/news-release/countyemploymentand
 https://www.osc.state.ny.us/reports/state-fiscal-year-2022-23-enacted-budget-analysis
 https://ballotpedia.org/New_York_state_budget_and_finances
 https://www.thebalancemoney.com/average-salary-information-for-us-workers-2060808#:~:text=Median%20Salary%20Information%20for%20U.S.,higher%20than%20a%20year%20earlier.
+
+
+
+Our initial Questions:
+
+1. How many municipal employees in New York State were active, have stopped working, and were on leave?
+2. Which New York counties had a high base mean salary?
+3. Did any of the New York counties have a high median and upper quartile?
+4. Was there any New York county who gave more overtime pay to their municipal employees?
+5. Were there any differences in the median base salary among the counties?
+6. Which county had the highest median base salary, annually, daily, hourly, and prorated?
+7.. Were there any significance in the difference of mean of base salary across all counties? 
+8. Is there any significance in the difference of mean of base salary between certain counties?
+
+During the course of our project, we decided to look at the job title variable. The new questions that we considered were:
+
+9. What were the top 10 job titles throughout the New York State counties?
+10. What were the top 5 job titles in Kings county, Albany county, New York county, Richmond county, and Queens county?
+11. What were the top 10 jobs in New York County?
+12. Which job title had the highest frequency in Albany county?
+
  
  
 Exploratory analysis: 
@@ -576,9 +597,49 @@ Median total overtime pay for municipal employees in New York State by its count
  
 Furthermore, an exploratory analysis on top jobs for New York County and Anbany was conducted to comprehend our earlier analysis on Mean base salary where New York county ranked second lowest  from mean base salary while Albany ranked highest (Fig1). We assumed that the top ten job titles would explain this finding. Based on Figure 6,7 , the top ten job titles in New York County are community associate, school aide, police officer, substitute education, election worker, teacher and Teacher Per Session. However, there were only 6 top titles in Albany, which are supervisor, assistant director, special assistant, watershed maintainer, assistant legislative representative. As we expected these top job titles explained our main finding on mean salary that top 6 job titles were higher rank jobs as compared to New York County. 
 
+After cleaning the data, we wanted to look at leave status to know how many municipal employees were actively working, had stopped working at their jobs or were on leave.  We constructed a pie chart which shows the percentages of leave status for all municipal employees in 2022.  
+
+We assumed that the majority of the municipal employees across all New York state counties  would have a leave status of active. 81.1 % of the municipal employees were actively working which was to be expected.  17.2 % of employees have stopped working at their municipal jobs and 1.7 municipal employees were on leave. 
+
+
+We also performed a bar graph to show the distribution of leave status. In 2022, there were a total of 594,234 municipal employees across New York state counties.  The graph shows that 481,781 municipal employees had a leave status of active and 102,360 employees had a leave status of ceased.  The remaining number of municipal employees, 10,093, were on leave. 
+
+
+Since we are based in New York City ,NYC, we decided to look at the top 5 job titles for each of the counties for the 5 boroughs in NYC and compare that with top 5 job titles with the top 5 job titles in Albany county because Albany has the highest mean base salary.  We choose Richmond county, Bronx county, Kings county, Queens county, and New York county as they all represent New York City which is one of the largest financial epicenters.  These counties were also chosen because when looking at the bar graph for the number of job titles held by employees, you saw that the ones that had the most number of job titles were the counties that were selected.  We conducted a scatterplot to see which county has a high number of specific job titles.  Looking at the plot, you can see that in New York county, the number of teachers per session was 113,882 meaning that New York County has the highest number of teachers per session among the six counties.  Queens county had the highest number of correction officers, 7,708.  For Bronx county, their highest job title was a police officer, 3,807. However, it was Kings county who had the most police officers as they had 5,815.  Albany county had the most number of assistant legislative representatives which was 4. 
+
+
+
+
+
+
 Additional Analysis:
 
 For additional analysis, an ANOVA was done to determine whether there is a significant difference in mean base salary for municipal workers between the counties in New York State in 2022.  The null hypothesis for this test is that all the base salary means for each county are equal.  The alternative hypothesis is that not all the base salary means for each county are equal.  The level of significance for this test is 0.05.  The p-value for this test is 0 (Table 1).  Based on the results of this F-test, at a level of significance of 0.05, we reject the null hypothesis as there is enough evidence to support that not all the base salary means for each county are equal.
 
 As an ANOVA does not indicate which base salary means are different and we need to control and preserve the overall family-wise error rate at the pre-specified alpha level of 0.05, we have also conducted a Tukey’s test.  Based on Table 2, the following county comparisons have significant differences in mean salary for municipal workers in 2022 as the p-values are less than 0.05 and the null value of 0 is not included within the corresponding confidence interval: Bronx and Albany, Nassau and Albany, New York and Albany, Richmond and Albany, Kings and Bronx, New York and Bronx, Queens and Bronx, Richmond and Bronx, Sullivan and Bronx, Ulster and Bronx, Westchester and Bronx, Nassau and Delaware, New York and Delaware, Nassau and Kings, New York and Kings, Richmond and Kings, Ulster and Kings, Westchester and Kings, Queens and Nassau, Richmond and Nassau, Sullivan and Nassau, Ulster and Nassau, Westchester and Nassau, Queens and New York, Richmond and New York, Sullivan and New York, Ulster and New York, Westchester and New York, Ulster and Queens, Westchester and Queens, Ulster and Richmond, and Westchester and Richmond.
+
+
+Discussions
+
+Findings:
+
+In our exploratory analysis we looked at leave status, base salary, overtime pay, job titles, total other pay,  and base salary by pay basis across New York State counties in 2022.
+
+Prior to computing the percentages and numbers of leave status employees for all 16 counties, we predicted that most of the municipal employees had an leave status of active which was in fact true that majority of the 594, 234 employees were actively working.  The remaining number of employees were either on leave or stopped working. 
+
+When looking at the mean salary of municipal employees in New State York counties, we found it interesting that Albany had the highest mean base salary. We saw that there was a notable difference in the average base salary between New York County and Albany county. We assumed that the average base salary in New York county would be fairly high due to it being known as  a financial hub in New York State.  
+
+Since Albany had the highest mean base salary, we decided to look at the job titles across all 16 counties in New York. We also expected that New York county would have the most number of job titles due its large population. When looking at the number of job titles in New York state counties, New York county did indeed have the highest number of job titles, with Queens county coming in second then Kings county and Bronx county. We found it interesting that  Albany county had the third lowest number of job titles meaning that the variability of jobs is low.  
+
+
+We also looked at the top 5 job titles across Bronx, Kings, Queens, New York, and Albany counties.  The most prominent job titles were correction officer, assistant legislative representatives, teachers per session, and  correction officers.  It was interesting that Albany had the fewest number of job titles, their highest number being 4 and also having the highest mean base salary.  One could infer that the quality of jobs should be taken into account that a  higher quality job could mean a higher base salary.
+
+
+We also looked at the median of the total other pay for municipal employees across all New York State counties in 2022 and found that New York county had the lowest median pay and Schoharie county had the highest median for total other pay which was  approximately more than 5,000 dollars for municipal employees. This was a result that we did not expect and we believed that New York county would also have the highest median. It is important to acknowledge that New York county had numerous outliers which could have been possible due to its large population. Other counties that had many outliers were Queens, Bronx, and Kings.   
+
+In addition to looking at the mean base salary, we also chose to look at the median for the annual, daily, hourly, and prorated  base salary.  Albany had the highest annual median base salary with New York county coming in second. For the daily median base salary, Albany, Dutchess, and Greene county had the highest median base salary.  Nassau county had the highest hourly median base salary.  For prorated base mean salary , Ulster county had the highest followed by New York county.  We also determined which county has the highest median total overtime pay for municipal employees in New York state.  It was found that New York had the lowest median total overtime pay while Greene county had the highest median.  
+
+In our statistical analysis, specifically the ANOVA test,  we claimed that there are significant  differences between the means of base salary for all New York State counties.  This hypothesis was proven to be true as the p value was zero allowing to reject the null hypothesis that there was no difference. We also predicted that there were significant differences in the mean base salary among all of the counties which led us to perform the Tukey test. In the Tukey test we saw that there were many significant differences in the mean base salary when comparing the counties among one another. Some significant differences were: New York and Albany, Kings and Bronx, New York and Bronx, Richmond and Kings, and Ulster and Kings.  Ultimately, we saw that most of the significant differences between NYC 5 boroughs and Albany as their p values were less than 0.05 which confirmed our claim. 
+
+
 
