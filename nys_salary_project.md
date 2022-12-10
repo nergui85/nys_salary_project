@@ -1,6 +1,8 @@
-nys_salary_project
+New York State Municipal Employee Salaries
 ================
-Nergui, Varvara, Justin
+Nergui Ravzanaadii, Varvara Rousseau, Justin Vargas
+
+# Libraries and Settings for Plots
 
 ``` r
 library(tidyverse)
@@ -9,7 +11,7 @@ library(tidyverse)
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
     ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
+    ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
@@ -40,14 +42,20 @@ knitr::opts_chunk$set(
   fig.height = 6,
   out.width = "90%"
 )
+
 options(
   ggplot2.continuous.colour = "viridis",
   ggplot2.continuous.fill = "viridis"
 )
+
 scale_colour_discrete = scale_colour_viridis_d
+
 scale_fill_discrete = scale_fill_viridis_d
+
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
 ```
+
+# Cleaning and Organizing Data
 
 ``` r
  payroll_data = 
@@ -81,7 +89,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (9): Agency Name, Last Name, First Name, Mid Init, Agency Start Date, Wo...
-    ## dbl (8): Fiscal Year, Payroll Number, Base Salary, Regular Hours, Regular Gr...
+    ## dbl (2): Fiscal Year, Payroll Number
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -103,8 +111,7 @@ head(payroll_data)
     ## #   ¹​agency_name, ²​start_year, ³​base_salary, ⁴​pay_basis, ⁵​total_ot_paid,
     ## #   ⁶​total_other_pay, ⁷​leave_status, ⁸​county_name
 
-\#Varvy’s visualizations \#Pie Chart for the percentages and numbers of
-the different leave statuses
+# Pie Chart for the percentages and numbers of the different leave statuses
 
 ``` r
 Total_ls = table(pull(payroll_data,leave_status))
@@ -129,8 +136,7 @@ legend("topright", c("Active", "Ceased", "On Leave"),cex = 0.9, fill = viridis(l
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
 
-\#Bar Graph for number of employees by municipality separated by leave
-status
+# Bar Graph for number of employees by municipality separated by leave status
 
 ``` r
 Ls_bar = payroll_data %>%
@@ -143,13 +149,10 @@ ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + geom_bar
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />
 
-\#Varvara & Justin - Statistical Analysis(ANOVA and Tukey Test)
+# ANOVA and Tukey’s Test
 
-\#Performing the ANOVA tests to determine significant difference in the
-means of total pay among municipal employees by county in 2022
-
-Null Hypothesis(Ho) = The mean base salary is constant for all counties
-H1 = The mean base salary is different for all municipalities
+\#Null Hypothesis(Ho) = The mean base salary is constant for all
+counties \#H1 = The mean base salary is different for all municipalities
 
 ``` r
 bs_model = payroll_data %>%
@@ -464,17 +467,15 @@ Tukey_bs %>%broom::tidy() %>% knitr::kable(caption = "Tukey Test for Mean Salary
 
 Tukey Test for Mean Salary by County
 
-# Justin’s Visualizations
-
-## First Plot - Mean Base Salary By New York Counties
+# Mean Base Salary By New York State Counties Plot
 
 ``` r
 mean_base_salary_plot =
   payroll_data %>%
   group_by(county_name) %>%
   summarize(
-      mean_base_salary = mean(base_salary, na.rm = TRUE)) %>%
-        ggplot(aes(x = reorder(county_name, mean_base_salary), y = mean_base_salary, fill = county_name)) +
+  mean_base_salary = mean(base_salary, na.rm = TRUE)) %>%
+  ggplot(aes(x = reorder(county_name, mean_base_salary), y = mean_base_salary, fill = county_name)) +
   geom_bar(position = "dodge", stat = "identity") +
   scale_y_continuous(
       labels = scales::comma) +
@@ -491,17 +492,18 @@ mean_base_salary_plot
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-7-1.png" width="90%" />
 
-## Second Plot - Total Other Pay by New York Counties
+# Total Other Pay by New York Counties Plot
 
 ``` r
 median_tibble =
   payroll_data %>%
   group_by(county_name) %>%
   summarise(median_total_other_pay = median(total_other_pay))
+
 median_other_pay_plot =
   payroll_data %>%
   left_join(median_tibble, by = "county_name") %>%
-        ggplot(aes(x = reorder(county_name, median_total_other_pay), y = total_other_pay, fill = county_name)) +
+  ggplot(aes(x = reorder(county_name, median_total_other_pay), y = total_other_pay, fill = county_name)) +
   geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
@@ -520,11 +522,7 @@ median_other_pay_plot
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
 
-``` r
-#Fix reordering of boxplots
-```
-
-## Third Plot - Total Number of Job Titles by New York Counties
+# Total Number of Job Titles by New York State Counties Plot
 
 ``` r
 number_job_titles_plot =
@@ -534,7 +532,7 @@ number_job_titles_plot =
   ungroup() %>% 
   group_by(county_name) %>%
   summarise(count = n()) %>%
-        ggplot(aes(x = reorder(county_name, count), y = count, fill = county_name)) +
+  ggplot(aes(x = reorder(county_name, count), y = count, fill = county_name)) +
   geom_bar(position = "dodge", stat = "identity") +
   scale_y_continuous(
       labels = scales::comma,
