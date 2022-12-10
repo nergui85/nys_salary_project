@@ -9,7 +9,7 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.4 
+    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
     ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
@@ -75,8 +75,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
              pay_basis = recode(pay_basis, "per Hour" = "Hourly"),
              county_name = work_location_borough,
              county_name = recode(county_name, "MANHATTAN" = "NEW YORK"),
-             county_name = recode(county_name, "BROOKLYN" = "KINGS",
-             job_title = title_description)) %>% 
+             county_name = recode(county_name, "BROOKLYN" = "KINGS")) %>% 
     select(-payroll_number, -first_name, -last_name, -mid_init, -month, -day, -leave_status_as_of_june_30, -regular_hours, -ot_hours, -regular_gross_paid, -work_location_borough) %>% 
     mutate(county_name = as.factor(county_name),
            pay_basis = as.factor(pay_basis),
@@ -132,7 +131,7 @@ par(xpd = TRUE)
 
 pie(Total_ls, labels = paste(labels, sep = " ", piepercent, "%"),
     main = "Percentages of Municipal Employees by Leave Status Across All Counties", col =       viridis(length(Total_ls)))
-legend("topright", c("Active", "Ceased", "On Leave"),cex = 0.9, fill = viridis(length(Total_ls)))
+legend("topright", c("Active", "Ceased", "On Leave"),cex = 1.1, fill = viridis(length(Total_ls)))
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
@@ -161,11 +160,6 @@ scale_y_continuous(labels = scales::comma)
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />
 
 # ANOVA Analysis
-
-Null Hypothesis(Ho) = The mean base salary is constant for all counties
-
-Alternative Hypothesis(H1) = The mean base salary is different for all
-municipalities
 
 ``` r
 ms_model = 
@@ -338,135 +332,136 @@ tukey_ms
 tukey_table = 
     tukey_ms %>% 
     broom::tidy() %>%
-    knitr::kable(caption = "Tukey Test for Mean Salary by County")
+    select(-term) %>%
+    knitr::kable(caption = "Tukey Test for Mean Base Salary by New York State County")
 
 tukey_table
 ```
 
-| term                | contrast              | null.value |      estimate |     conf.low |     conf.high | adj.p.value |
-|:--------------------|:----------------------|-----------:|--------------:|-------------:|--------------:|------------:|
-| factor(county_name) | BRONX-ALBANY          |          0 | -46793.672635 |  -90512.1734 |  -3075.171912 |   0.0222448 |
-| factor(county_name) | DELAWARE-ALBANY       |          0 | -37028.785191 |  -84073.8941 |  10016.323741 |   0.3324215 |
-| factor(county_name) | DUTCHESS-ALBANY       |          0 | -46795.579199 |  -99123.4667 |   5532.308303 |   0.1432005 |
-| factor(county_name) | GREENE-ALBANY         |          0 | -44972.509532 | -111258.7702 |  21313.751087 |   0.6052943 |
-| factor(county_name) | KINGS-ALBANY          |          0 | -41916.067279 |  -85629.6490 |   1797.514460 |   0.0771545 |
-| factor(county_name) | NASSAU-ALBANY         |          0 | -71164.422020 | -121325.2335 | -21003.610556 |   0.0001341 |
-| factor(county_name) | NEW YORK-ALBANY       |          0 | -61724.589860 | -105433.0877 | -18016.091985 |   0.0001499 |
-| factor(county_name) | ORANGE-ALBANY         |          0 | -44452.301533 | -207992.1609 | 119087.557797 |   0.9999216 |
-| factor(county_name) | PUTNAM-ALBANY         |          0 | -40564.933675 |  -90581.7796 |   9451.912253 |   0.2812590 |
-| factor(county_name) | QUEENS-ALBANY         |          0 | -42864.041768 |  -86576.6770 |    848.593477 |   0.0615951 |
-| factor(county_name) | RICHMOND-ALBANY       |          0 | -43922.761054 |  -87668.6783 |   -176.843758 |   0.0478351 |
-| factor(county_name) | SCHOHARIE-ALBANY      |          0 | -35125.034981 |  -87724.9749 |  17474.904959 |   0.6329486 |
-| factor(county_name) | SULLIVAN-ALBANY       |          0 | -31241.821142 |  -77115.5638 |  14631.921470 |   0.5985696 |
-| factor(county_name) | ULSTER-ALBANY         |          0 | -27363.261353 |  -71913.6099 |  17187.087179 |   0.7627319 |
-| factor(county_name) | WESTCHESTER-ALBANY    |          0 | -33863.274624 |  -78097.0292 |  10370.479944 |   0.3822703 |
-| factor(county_name) | DELAWARE-BRONX        |          0 |   9764.887443 |   -7664.8141 |  27194.588978 |   0.8674314 |
-| factor(county_name) | DUTCHESS-BRONX        |          0 |     -1.906564 |  -28790.0991 |  28786.286008 |   1.0000000 |
-| factor(county_name) | GREENE-BRONX          |          0 |   1821.163102 |  -48022.7991 |  51665.125305 |   1.0000000 |
-| factor(county_name) | KINGS-BRONX           |          0 |   4877.605356 |    3682.0094 |   6073.201276 |   0.0000000 |
-| factor(county_name) | NASSAU-BRONX          |          0 | -24370.749386 |  -49001.2026 |    259.703877 |   0.0560434 |
-| factor(county_name) | NEW YORK-BRONX        |          0 | -14930.917225 |  -15923.3927 | -13938.441726 |   0.0000000 |
-| factor(county_name) | ORANGE-BRONX          |          0 |   2341.371101 | -155252.5305 | 159935.272668 |   1.0000000 |
-| factor(county_name) | PUTNAM-BRONX          |          0 |   6228.738959 |  -18107.1830 |  30564.660922 |   0.9999637 |
-| factor(county_name) | QUEENS-BRONX          |          0 |   3929.630867 |    2769.1563 |   5090.105448 |   0.0000000 |
-| factor(county_name) | RICHMOND-BRONX        |          0 |   2870.911581 |     807.5403 |   4934.282908 |   0.0002127 |
-| factor(county_name) | SCHOHARIE-BRONX       |          0 |  11668.637654 |  -17611.1489 |  40948.424246 |   0.9932456 |
-| factor(county_name) | SULLIVAN-BRONX        |          0 |  15551.851493 |    1589.3130 |  29514.390031 |   0.0129459 |
-| factor(county_name) | ULSTER-BRONX          |          0 |  19430.411282 |   10753.6737 |  28107.148885 |   0.0000000 |
-| factor(county_name) | WESTCHESTER-BRONX     |          0 |  12930.398011 |    6061.8272 |  19798.968775 |   0.0000000 |
-| factor(county_name) | DUTCHESS-DELAWARE     |          0 |  -9766.794007 |  -43392.6026 |  23859.014541 |   0.9998199 |
-| factor(county_name) | GREENE-DELAWARE       |          0 |  -7943.724341 |  -60729.6651 |  44842.216373 |   1.0000000 |
-| factor(county_name) | KINGS-DELAWARE        |          0 |  -4887.282087 |  -22304.6418 |  12530.077603 |   0.9998829 |
-| factor(county_name) | NASSAU-DELAWARE       |          0 | -34135.636829 |  -64278.5331 |  -3992.740537 |   0.0101729 |
-| factor(county_name) | NEW YORK-DELAWARE     |          0 | -24695.804668 |  -42100.4011 |  -7291.208247 |   0.0001337 |
-| factor(county_name) | ORANGE-DELAWARE       |          0 |  -7423.516342 | -165972.4765 | 151125.443856 |   1.0000000 |
-| factor(county_name) | PUTNAM-DELAWARE       |          0 |  -3536.148484 |  -33438.8585 |  26366.561540 |   1.0000000 |
-| factor(county_name) | QUEENS-DELAWARE       |          0 |  -5835.256576 |  -23250.2406 |  11579.727495 |   0.9989983 |
-| factor(county_name) | RICHMOND-DELAWARE     |          0 |  -6893.975863 |  -24392.3321 |  10604.380352 |   0.9940052 |
-| factor(county_name) | SCHOHARIE-DELAWARE    |          0 |   1903.750211 |  -32143.8763 |  35951.376734 |   1.0000000 |
-| factor(county_name) | SULLIVAN-DELAWARE     |          0 |   5786.964050 |  -16504.0084 |  28077.936469 |   0.9999564 |
-| factor(county_name) | ULSTER-DELAWARE       |          0 |   9665.523839 |   -9756.6476 |  29087.695303 |   0.9460342 |
-| factor(county_name) | WESTCHESTER-DELAWARE  |          0 |   3165.510568 |  -15519.0347 |  21850.055874 |   0.9999999 |
-| factor(county_name) | GREENE-DUTCHESS       |          0 |   1823.069667 |  -55721.0097 |  59367.149058 |   1.0000000 |
-| factor(county_name) | KINGS-DUTCHESS        |          0 |   4879.511920 |  -23901.2100 |  33660.233845 |   0.9999999 |
-| factor(county_name) | NASSAU-DUTCHESS       |          0 | -24368.842821 |  -62231.2217 |  13493.536037 |   0.6937833 |
-| factor(county_name) | NEW YORK-DUTCHESS     |          0 | -14929.010661 |  -43702.0104 |  13843.989053 |   0.9245775 |
-| factor(county_name) | ORANGE-DUTCHESS       |          0 |   2343.277665 | -157852.6596 | 162539.214930 |   1.0000000 |
-| factor(county_name) | PUTNAM-DUTCHESS       |          0 |   6230.645524 |  -31440.7973 |  43902.088325 |   0.9999999 |
-| factor(county_name) | QUEENS-DUTCHESS       |          0 |   3931.537431 |  -24847.7469 |  32710.821755 |   1.0000000 |
-| factor(county_name) | RICHMOND-DUTCHESS     |          0 |   2872.818145 |  -25956.9929 |  31702.629212 |   1.0000000 |
-| factor(county_name) | SCHOHARIE-DUTCHESS    |          0 |  11670.544218 |  -29368.5397 |  52709.628124 |   0.9998615 |
-| factor(county_name) | SULLIVAN-DUTCHESS     |          0 |  15553.758057 |  -16412.6773 |  47520.193382 |   0.9553143 |
-| factor(county_name) | ULSTER-DUTCHESS       |          0 |  19432.317846 |  -10604.0981 |  49468.733750 |   0.6855515 |
-| factor(county_name) | WESTCHESTER-DUTCHESS  |          0 |  12932.304575 |  -16632.5017 |  42497.110837 |   0.9829191 |
-| factor(county_name) | KINGS-GREENE          |          0 |   3056.442253 |  -46783.2055 |  52896.090036 |   1.0000000 |
-| factor(county_name) | NASSAU-GREENE         |          0 | -26191.912488 |  -81772.6670 |  29388.841999 |   0.9661308 |
-| factor(county_name) | NEW YORK-GREENE       |          0 | -16752.080328 |  -66587.2692 |  33083.108536 |   0.9989603 |
-| factor(county_name) | ORANGE-GREENE         |          0 |    520.207999 | -164762.5765 | 165802.992500 |   1.0000000 |
-| factor(county_name) | PUTNAM-GREENE         |          0 |   4407.575857 |  -51043.2865 |  59858.438242 |   1.0000000 |
-| factor(county_name) | QUEENS-GREENE         |          0 |   2108.467764 |  -47730.3499 |  51947.285394 |   1.0000000 |
-| factor(county_name) | RICHMOND-GREENE       |          0 |   1049.748478 |  -48818.2627 |  50917.759694 |   1.0000000 |
-| factor(county_name) | SCHOHARIE-GREENE      |          0 |   9847.474551 |  -47944.1074 |  67639.056502 |   0.9999999 |
-| factor(county_name) | SULLIVAN-GREENE       |          0 |  13730.688390 |  -38014.0072 |  65475.384002 |   0.9999423 |
-| factor(county_name) | ULSTER-GREENE         |          0 |  17609.248179 |  -32965.9119 |  68184.408257 |   0.9984440 |
-| factor(county_name) | WESTCHESTER-GREENE    |          0 |  11109.234909 |  -39187.2690 |  61405.738821 |   0.9999948 |
-| factor(county_name) | NASSAU-KINGS          |          0 | -29248.354741 |  -53870.0759 |  -4626.633622 |   0.0048128 |
-| factor(county_name) | NEW YORK-KINGS        |          0 | -19808.522581 |  -20553.4592 | -19063.585952 |   0.0000000 |
-| factor(county_name) | ORANGE-KINGS          |          0 |  -2536.234255 | -160128.7713 | 155056.302796 |   1.0000000 |
-| factor(county_name) | PUTNAM-KINGS          |          0 |   1351.133603 |  -22975.9505 |  25678.217702 |   1.0000000 |
-| factor(county_name) | QUEENS-KINGS          |          0 |   -947.974489 |   -1905.3794 |      9.430451 |   0.0556275 |
-| factor(county_name) | RICHMOND-KINGS        |          0 |  -2006.693775 |   -3963.0742 |    -50.313394 |   0.0375474 |
-| factor(county_name) | SCHOHARIE-KINGS       |          0 |   6791.032298 |  -22481.4091 |  36063.473704 |   0.9999900 |
-| factor(county_name) | SULLIVAN-KINGS        |          0 |  10674.246137 |   -3272.8828 |  24621.375068 |   0.3827873 |
-| factor(county_name) | ULSTER-KINGS          |          0 |  14552.805926 |    5900.8872 |  23204.724696 |   0.0000010 |
-| factor(county_name) | WESTCHESTER-KINGS     |          0 |   8052.792655 |    1215.6012 |  14889.984133 |   0.0055358 |
-| factor(county_name) | NEW YORK-NASSAU       |          0 |   9439.832160 |  -15172.8619 |  34052.526220 |   0.9954854 |
-| factor(county_name) | ORANGE-NASSAU         |          0 |  26712.120487 | -132789.0943 | 186213.335254 |   0.9999999 |
-| factor(county_name) | PUTNAM-NASSAU         |          0 |  30599.488345 |   -3998.7312 |  65197.707939 |   0.1562546 |
-| factor(county_name) | QUEENS-NASSAU         |          0 |  28300.380252 |    3680.3396 |  52920.420921 |   0.0081241 |
-| factor(county_name) | RICHMOND-NASSAU       |          0 |  27241.660966 |    2562.5767 |  51920.745278 |   0.0146993 |
-| factor(county_name) | SCHOHARIE-NASSAU      |          0 |  36039.387040 |   -2198.1025 |  74276.876551 |   0.0909144 |
-| factor(county_name) | SULLIVAN-NASSAU       |          0 |  39922.600878 |   11642.7108 |  68202.490972 |   0.0001511 |
-| factor(county_name) | ULSTER-NASSAU         |          0 |  43801.160668 |   17722.7122 |  69879.609178 |   0.0000010 |
-| factor(county_name) | WESTCHESTER-NASSAU    |          0 |  37301.147396 |   11767.3078 |  62834.987014 |   0.0000647 |
-| factor(county_name) | ORANGE-NEW YORK       |          0 |  17272.288326 | -140318.8386 | 174863.415272 |   1.0000000 |
-| factor(county_name) | PUTNAM-NEW YORK       |          0 |  21159.656184 |   -3158.2915 |  45477.603852 |   0.1767366 |
-| factor(county_name) | QUEENS-NEW YORK       |          0 |  18860.548092 |   18173.3929 |  19547.703264 |   0.0000000 |
-| factor(county_name) | RICHMOND-NEW YORK     |          0 |  17801.828806 |   15962.5403 |  19641.117312 |   0.0000000 |
-| factor(county_name) | SCHOHARIE-NEW YORK    |          0 |  26599.554879 |   -2665.2941 |  55864.403826 |   0.1253369 |
-| factor(county_name) | SULLIVAN-NEW YORK     |          0 |  30482.768718 |   16551.5820 |  44413.955438 |   0.0000000 |
-| factor(county_name) | ULSTER-NEW YORK       |          0 |  34361.328507 |   25735.1326 |  42987.524448 |   0.0000000 |
-| factor(county_name) | WESTCHESTER-NEW YORK  |          0 |  27861.315236 |   21056.7032 |  34665.927298 |   0.0000000 |
-| factor(county_name) | PUTNAM-ORANGE         |          0 |   3887.367858 | -155568.6304 | 163343.366121 |   1.0000000 |
-| factor(county_name) | QUEENS-ORANGE         |          0 |   1588.259765 | -156004.0147 | 159180.534277 |   1.0000000 |
-| factor(county_name) | RICHMOND-ORANGE       |          0 |    529.540479 | -157071.9690 | 158131.049944 |   1.0000000 |
-| factor(county_name) | SCHOHARIE-ORANGE      |          0 |   9327.266553 | -150957.7427 | 169612.275793 |   1.0000000 |
-| factor(county_name) | SULLIVAN-ORANGE       |          0 |  13210.480392 | -144994.8633 | 171415.824065 |   1.0000000 |
-| factor(county_name) | ULSTER-ORANGE         |          0 |  17089.040181 | -140737.6498 | 174915.730128 |   1.0000000 |
-| factor(county_name) | WESTCHESTER-ORANGE    |          0 |  10589.026910 | -147148.5892 | 168326.643060 |   1.0000000 |
-| factor(county_name) | QUEENS-PUTNAM         |          0 |  -2299.108093 |  -26624.4914 |  22026.275201 |   1.0000000 |
-| factor(county_name) | RICHMOND-PUTNAM       |          0 |  -3357.827379 |  -27742.9678 |  21027.313022 |   1.0000000 |
-| factor(county_name) | SCHOHARIE-PUTNAM      |          0 |   5439.898695 |  -32608.5372 |  43488.334589 |   1.0000000 |
-| factor(county_name) | SULLIVAN-PUTNAM       |          0 |   9323.112533 |  -18700.6284 |  37346.853426 |   0.9990780 |
-| factor(county_name) | ULSTER-PUTNAM         |          0 |  13201.672323 |  -12598.7801 |  39002.124772 |   0.9324023 |
-| factor(county_name) | WESTCHESTER-PUTNAM    |          0 |   6701.659052 |  -18548.1892 |  31951.507279 |   0.9999421 |
-| factor(county_name) | RICHMOND-QUEENS       |          0 |  -1058.719286 |   -2993.8358 |    876.397209 |   0.8878165 |
-| factor(county_name) | SCHOHARIE-QUEENS      |          0 |   7739.006787 |  -21532.0212 |  37010.034742 |   0.9999449 |
-| factor(county_name) | SULLIVAN-QUEENS       |          0 |  11622.220626 |   -2321.9415 |  25566.382740 |   0.2377715 |
-| factor(county_name) | ULSTER-QUEENS         |          0 |  15500.780415 |    6853.6450 |  24147.915782 |   0.0000001 |
-| factor(county_name) | WESTCHESTER-QUEENS    |          0 |   9000.767144 |    2169.6297 |  15831.904601 |   0.0007032 |
-| factor(county_name) | SCHOHARIE-RICHMOND    |          0 |   8797.726073 |  -20522.9812 |  38118.433389 |   0.9997313 |
-| factor(county_name) | SULLIVAN-RICHMOND     |          0 |  12680.939912 |   -1367.2079 |  26729.087727 |   0.1327340 |
-| factor(county_name) | ULSTER-RICHMOND       |          0 |  16559.499701 |    7745.6611 |  25373.338254 |   0.0000000 |
-| factor(county_name) | WESTCHESTER-RICHMOND  |          0 |  10059.486430 |    3018.5178 |  17100.455038 |   0.0001131 |
-| factor(county_name) | SULLIVAN-SCHOHARIE    |          0 |   3883.213839 |  -28526.6436 |  36293.071270 |   1.0000000 |
-| factor(county_name) | ULSTER-SCHOHARIE      |          0 |   7761.773628 |  -22746.1295 |  38269.676730 |   0.9999665 |
-| factor(county_name) | WESTCHESTER-SCHOHARIE |          0 |   1261.760357 |  -28781.9352 |  31305.455879 |   1.0000000 |
-| factor(county_name) | ULSTER-SULLIVAN       |          0 |   3878.559789 |  -12503.7090 |  20260.828595 |   0.9999869 |
-| factor(county_name) | WESTCHESTER-SULLIVAN  |          0 |  -2621.453482 |  -18122.1057 |  12879.198767 |   0.9999999 |
-| factor(county_name) | WESTCHESTER-ULSTER    |          0 |  -6500.013271 |  -17481.9764 |   4481.949811 |   0.8099179 |
+| contrast              | null.value |      estimate |     conf.low |     conf.high | adj.p.value |
+|:----------------------|-----------:|--------------:|-------------:|--------------:|------------:|
+| BRONX-ALBANY          |          0 | -46793.672635 |  -90512.1734 |  -3075.171912 |   0.0222448 |
+| DELAWARE-ALBANY       |          0 | -37028.785191 |  -84073.8941 |  10016.323741 |   0.3324215 |
+| DUTCHESS-ALBANY       |          0 | -46795.579199 |  -99123.4667 |   5532.308303 |   0.1432005 |
+| GREENE-ALBANY         |          0 | -44972.509532 | -111258.7702 |  21313.751087 |   0.6052943 |
+| KINGS-ALBANY          |          0 | -41916.067279 |  -85629.6490 |   1797.514460 |   0.0771545 |
+| NASSAU-ALBANY         |          0 | -71164.422020 | -121325.2335 | -21003.610556 |   0.0001341 |
+| NEW YORK-ALBANY       |          0 | -61724.589860 | -105433.0877 | -18016.091985 |   0.0001499 |
+| ORANGE-ALBANY         |          0 | -44452.301533 | -207992.1609 | 119087.557797 |   0.9999216 |
+| PUTNAM-ALBANY         |          0 | -40564.933675 |  -90581.7796 |   9451.912253 |   0.2812590 |
+| QUEENS-ALBANY         |          0 | -42864.041768 |  -86576.6770 |    848.593477 |   0.0615951 |
+| RICHMOND-ALBANY       |          0 | -43922.761054 |  -87668.6783 |   -176.843758 |   0.0478351 |
+| SCHOHARIE-ALBANY      |          0 | -35125.034981 |  -87724.9749 |  17474.904959 |   0.6329486 |
+| SULLIVAN-ALBANY       |          0 | -31241.821142 |  -77115.5638 |  14631.921470 |   0.5985696 |
+| ULSTER-ALBANY         |          0 | -27363.261353 |  -71913.6099 |  17187.087179 |   0.7627319 |
+| WESTCHESTER-ALBANY    |          0 | -33863.274624 |  -78097.0292 |  10370.479944 |   0.3822703 |
+| DELAWARE-BRONX        |          0 |   9764.887443 |   -7664.8141 |  27194.588978 |   0.8674314 |
+| DUTCHESS-BRONX        |          0 |     -1.906564 |  -28790.0991 |  28786.286008 |   1.0000000 |
+| GREENE-BRONX          |          0 |   1821.163102 |  -48022.7991 |  51665.125305 |   1.0000000 |
+| KINGS-BRONX           |          0 |   4877.605356 |    3682.0094 |   6073.201276 |   0.0000000 |
+| NASSAU-BRONX          |          0 | -24370.749386 |  -49001.2026 |    259.703877 |   0.0560434 |
+| NEW YORK-BRONX        |          0 | -14930.917225 |  -15923.3927 | -13938.441726 |   0.0000000 |
+| ORANGE-BRONX          |          0 |   2341.371101 | -155252.5305 | 159935.272668 |   1.0000000 |
+| PUTNAM-BRONX          |          0 |   6228.738959 |  -18107.1830 |  30564.660922 |   0.9999637 |
+| QUEENS-BRONX          |          0 |   3929.630867 |    2769.1563 |   5090.105448 |   0.0000000 |
+| RICHMOND-BRONX        |          0 |   2870.911581 |     807.5403 |   4934.282908 |   0.0002127 |
+| SCHOHARIE-BRONX       |          0 |  11668.637654 |  -17611.1489 |  40948.424246 |   0.9932456 |
+| SULLIVAN-BRONX        |          0 |  15551.851493 |    1589.3130 |  29514.390031 |   0.0129459 |
+| ULSTER-BRONX          |          0 |  19430.411282 |   10753.6737 |  28107.148885 |   0.0000000 |
+| WESTCHESTER-BRONX     |          0 |  12930.398011 |    6061.8272 |  19798.968775 |   0.0000000 |
+| DUTCHESS-DELAWARE     |          0 |  -9766.794007 |  -43392.6026 |  23859.014541 |   0.9998199 |
+| GREENE-DELAWARE       |          0 |  -7943.724341 |  -60729.6651 |  44842.216373 |   1.0000000 |
+| KINGS-DELAWARE        |          0 |  -4887.282087 |  -22304.6418 |  12530.077603 |   0.9998829 |
+| NASSAU-DELAWARE       |          0 | -34135.636829 |  -64278.5331 |  -3992.740537 |   0.0101729 |
+| NEW YORK-DELAWARE     |          0 | -24695.804668 |  -42100.4011 |  -7291.208247 |   0.0001337 |
+| ORANGE-DELAWARE       |          0 |  -7423.516342 | -165972.4765 | 151125.443856 |   1.0000000 |
+| PUTNAM-DELAWARE       |          0 |  -3536.148484 |  -33438.8585 |  26366.561540 |   1.0000000 |
+| QUEENS-DELAWARE       |          0 |  -5835.256576 |  -23250.2406 |  11579.727495 |   0.9989983 |
+| RICHMOND-DELAWARE     |          0 |  -6893.975863 |  -24392.3321 |  10604.380352 |   0.9940052 |
+| SCHOHARIE-DELAWARE    |          0 |   1903.750211 |  -32143.8763 |  35951.376734 |   1.0000000 |
+| SULLIVAN-DELAWARE     |          0 |   5786.964050 |  -16504.0084 |  28077.936469 |   0.9999564 |
+| ULSTER-DELAWARE       |          0 |   9665.523839 |   -9756.6476 |  29087.695303 |   0.9460342 |
+| WESTCHESTER-DELAWARE  |          0 |   3165.510568 |  -15519.0347 |  21850.055874 |   0.9999999 |
+| GREENE-DUTCHESS       |          0 |   1823.069667 |  -55721.0097 |  59367.149058 |   1.0000000 |
+| KINGS-DUTCHESS        |          0 |   4879.511920 |  -23901.2100 |  33660.233845 |   0.9999999 |
+| NASSAU-DUTCHESS       |          0 | -24368.842821 |  -62231.2217 |  13493.536037 |   0.6937833 |
+| NEW YORK-DUTCHESS     |          0 | -14929.010661 |  -43702.0104 |  13843.989053 |   0.9245775 |
+| ORANGE-DUTCHESS       |          0 |   2343.277665 | -157852.6596 | 162539.214930 |   1.0000000 |
+| PUTNAM-DUTCHESS       |          0 |   6230.645524 |  -31440.7973 |  43902.088325 |   0.9999999 |
+| QUEENS-DUTCHESS       |          0 |   3931.537431 |  -24847.7469 |  32710.821755 |   1.0000000 |
+| RICHMOND-DUTCHESS     |          0 |   2872.818145 |  -25956.9929 |  31702.629212 |   1.0000000 |
+| SCHOHARIE-DUTCHESS    |          0 |  11670.544218 |  -29368.5397 |  52709.628124 |   0.9998615 |
+| SULLIVAN-DUTCHESS     |          0 |  15553.758057 |  -16412.6773 |  47520.193382 |   0.9553143 |
+| ULSTER-DUTCHESS       |          0 |  19432.317846 |  -10604.0981 |  49468.733750 |   0.6855515 |
+| WESTCHESTER-DUTCHESS  |          0 |  12932.304575 |  -16632.5017 |  42497.110837 |   0.9829191 |
+| KINGS-GREENE          |          0 |   3056.442253 |  -46783.2055 |  52896.090036 |   1.0000000 |
+| NASSAU-GREENE         |          0 | -26191.912488 |  -81772.6670 |  29388.841999 |   0.9661308 |
+| NEW YORK-GREENE       |          0 | -16752.080328 |  -66587.2692 |  33083.108536 |   0.9989603 |
+| ORANGE-GREENE         |          0 |    520.207999 | -164762.5765 | 165802.992500 |   1.0000000 |
+| PUTNAM-GREENE         |          0 |   4407.575857 |  -51043.2865 |  59858.438242 |   1.0000000 |
+| QUEENS-GREENE         |          0 |   2108.467764 |  -47730.3499 |  51947.285394 |   1.0000000 |
+| RICHMOND-GREENE       |          0 |   1049.748478 |  -48818.2627 |  50917.759694 |   1.0000000 |
+| SCHOHARIE-GREENE      |          0 |   9847.474551 |  -47944.1074 |  67639.056502 |   0.9999999 |
+| SULLIVAN-GREENE       |          0 |  13730.688390 |  -38014.0072 |  65475.384002 |   0.9999423 |
+| ULSTER-GREENE         |          0 |  17609.248179 |  -32965.9119 |  68184.408257 |   0.9984440 |
+| WESTCHESTER-GREENE    |          0 |  11109.234909 |  -39187.2690 |  61405.738821 |   0.9999948 |
+| NASSAU-KINGS          |          0 | -29248.354741 |  -53870.0759 |  -4626.633622 |   0.0048128 |
+| NEW YORK-KINGS        |          0 | -19808.522581 |  -20553.4592 | -19063.585952 |   0.0000000 |
+| ORANGE-KINGS          |          0 |  -2536.234255 | -160128.7713 | 155056.302796 |   1.0000000 |
+| PUTNAM-KINGS          |          0 |   1351.133603 |  -22975.9505 |  25678.217702 |   1.0000000 |
+| QUEENS-KINGS          |          0 |   -947.974489 |   -1905.3794 |      9.430451 |   0.0556275 |
+| RICHMOND-KINGS        |          0 |  -2006.693775 |   -3963.0742 |    -50.313394 |   0.0375474 |
+| SCHOHARIE-KINGS       |          0 |   6791.032298 |  -22481.4091 |  36063.473704 |   0.9999900 |
+| SULLIVAN-KINGS        |          0 |  10674.246137 |   -3272.8828 |  24621.375068 |   0.3827873 |
+| ULSTER-KINGS          |          0 |  14552.805926 |    5900.8872 |  23204.724696 |   0.0000010 |
+| WESTCHESTER-KINGS     |          0 |   8052.792655 |    1215.6012 |  14889.984133 |   0.0055358 |
+| NEW YORK-NASSAU       |          0 |   9439.832160 |  -15172.8619 |  34052.526220 |   0.9954854 |
+| ORANGE-NASSAU         |          0 |  26712.120487 | -132789.0943 | 186213.335254 |   0.9999999 |
+| PUTNAM-NASSAU         |          0 |  30599.488345 |   -3998.7312 |  65197.707939 |   0.1562546 |
+| QUEENS-NASSAU         |          0 |  28300.380252 |    3680.3396 |  52920.420921 |   0.0081241 |
+| RICHMOND-NASSAU       |          0 |  27241.660966 |    2562.5767 |  51920.745278 |   0.0146993 |
+| SCHOHARIE-NASSAU      |          0 |  36039.387040 |   -2198.1025 |  74276.876551 |   0.0909144 |
+| SULLIVAN-NASSAU       |          0 |  39922.600878 |   11642.7108 |  68202.490972 |   0.0001511 |
+| ULSTER-NASSAU         |          0 |  43801.160668 |   17722.7122 |  69879.609178 |   0.0000010 |
+| WESTCHESTER-NASSAU    |          0 |  37301.147396 |   11767.3078 |  62834.987014 |   0.0000647 |
+| ORANGE-NEW YORK       |          0 |  17272.288326 | -140318.8386 | 174863.415272 |   1.0000000 |
+| PUTNAM-NEW YORK       |          0 |  21159.656184 |   -3158.2915 |  45477.603852 |   0.1767366 |
+| QUEENS-NEW YORK       |          0 |  18860.548092 |   18173.3929 |  19547.703264 |   0.0000000 |
+| RICHMOND-NEW YORK     |          0 |  17801.828806 |   15962.5403 |  19641.117312 |   0.0000000 |
+| SCHOHARIE-NEW YORK    |          0 |  26599.554879 |   -2665.2941 |  55864.403826 |   0.1253369 |
+| SULLIVAN-NEW YORK     |          0 |  30482.768718 |   16551.5820 |  44413.955438 |   0.0000000 |
+| ULSTER-NEW YORK       |          0 |  34361.328507 |   25735.1326 |  42987.524448 |   0.0000000 |
+| WESTCHESTER-NEW YORK  |          0 |  27861.315236 |   21056.7032 |  34665.927298 |   0.0000000 |
+| PUTNAM-ORANGE         |          0 |   3887.367858 | -155568.6304 | 163343.366121 |   1.0000000 |
+| QUEENS-ORANGE         |          0 |   1588.259765 | -156004.0147 | 159180.534277 |   1.0000000 |
+| RICHMOND-ORANGE       |          0 |    529.540479 | -157071.9690 | 158131.049944 |   1.0000000 |
+| SCHOHARIE-ORANGE      |          0 |   9327.266553 | -150957.7427 | 169612.275793 |   1.0000000 |
+| SULLIVAN-ORANGE       |          0 |  13210.480392 | -144994.8633 | 171415.824065 |   1.0000000 |
+| ULSTER-ORANGE         |          0 |  17089.040181 | -140737.6498 | 174915.730128 |   1.0000000 |
+| WESTCHESTER-ORANGE    |          0 |  10589.026910 | -147148.5892 | 168326.643060 |   1.0000000 |
+| QUEENS-PUTNAM         |          0 |  -2299.108093 |  -26624.4914 |  22026.275201 |   1.0000000 |
+| RICHMOND-PUTNAM       |          0 |  -3357.827379 |  -27742.9678 |  21027.313022 |   1.0000000 |
+| SCHOHARIE-PUTNAM      |          0 |   5439.898695 |  -32608.5372 |  43488.334589 |   1.0000000 |
+| SULLIVAN-PUTNAM       |          0 |   9323.112533 |  -18700.6284 |  37346.853426 |   0.9990780 |
+| ULSTER-PUTNAM         |          0 |  13201.672323 |  -12598.7801 |  39002.124772 |   0.9324023 |
+| WESTCHESTER-PUTNAM    |          0 |   6701.659052 |  -18548.1892 |  31951.507279 |   0.9999421 |
+| RICHMOND-QUEENS       |          0 |  -1058.719286 |   -2993.8358 |    876.397209 |   0.8878165 |
+| SCHOHARIE-QUEENS      |          0 |   7739.006787 |  -21532.0212 |  37010.034742 |   0.9999449 |
+| SULLIVAN-QUEENS       |          0 |  11622.220626 |   -2321.9415 |  25566.382740 |   0.2377715 |
+| ULSTER-QUEENS         |          0 |  15500.780415 |    6853.6450 |  24147.915782 |   0.0000001 |
+| WESTCHESTER-QUEENS    |          0 |   9000.767144 |    2169.6297 |  15831.904601 |   0.0007032 |
+| SCHOHARIE-RICHMOND    |          0 |   8797.726073 |  -20522.9812 |  38118.433389 |   0.9997313 |
+| SULLIVAN-RICHMOND     |          0 |  12680.939912 |   -1367.2079 |  26729.087727 |   0.1327340 |
+| ULSTER-RICHMOND       |          0 |  16559.499701 |    7745.6611 |  25373.338254 |   0.0000000 |
+| WESTCHESTER-RICHMOND  |          0 |  10059.486430 |    3018.5178 |  17100.455038 |   0.0001131 |
+| SULLIVAN-SCHOHARIE    |          0 |   3883.213839 |  -28526.6436 |  36293.071270 |   1.0000000 |
+| ULSTER-SCHOHARIE      |          0 |   7761.773628 |  -22746.1295 |  38269.676730 |   0.9999665 |
+| WESTCHESTER-SCHOHARIE |          0 |   1261.760357 |  -28781.9352 |  31305.455879 |   1.0000000 |
+| ULSTER-SULLIVAN       |          0 |   3878.559789 |  -12503.7090 |  20260.828595 |   0.9999869 |
+| WESTCHESTER-SULLIVAN  |          0 |  -2621.453482 |  -18122.1057 |  12879.198767 |   0.9999999 |
+| WESTCHESTER-ULSTER    |          0 |  -6500.013271 |  -17481.9764 |   4481.949811 |   0.8099179 |
 
-Tukey Test for Mean Salary by County
+Tukey Test for Mean Base Salary by New York State County
 
 # Mean Base Salary By New York State Counties Plot
 
@@ -479,10 +474,12 @@ mean_base_salary_plot =
   ggplot(aes(x = reorder(county_name, mean_base_salary), y = mean_base_salary, fill = county_name)) +
   geom_bar(position = "dodge", stat = "identity") +
   scale_y_continuous(
-      labels = scales::comma) +
+      labels = scales::comma,
+    limits = c(0, 110000),
+    breaks = seq(0, 110000, by = 27500)) +
   labs(
     x = "County Names",
-    y = "Mean Base Salary",
+    y = "Mean Base Salary ($)",
     title = "The Average Base Salary for Municipal Employees of New York State By County",
     fill = "New York State County Names"
   ) + 
@@ -512,8 +509,8 @@ median_other_pay_plot =
     breaks = seq(-20000, 40000, by = 10000)) +
   labs(
     x = "County Names",
-    y = "Median Total Other Types of Pay",
-    title = "The Median Total Other Pay for Municipal Employees of New York State By County",
+    y = "Total for Other Pay ($)",
+    title = "The Total Other Pay for Municipal Employees of New York State By County",
     fill = "New York State County Names"
   ) + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 0.5)) 
@@ -537,12 +534,12 @@ number_job_titles_plot =
   geom_bar(position = "dodge", stat = "identity") +
   scale_y_continuous(
       labels = scales::comma,
-    limits = c(0, 1500),
-    breaks = seq(0, 1500, by = 250)) +
+    limits = c(0, 1375),
+    breaks = seq(0, 1375, by = 275)) +
   labs(
     x = "County Names",
     y = "Number of Job Titles",
-    title = "The Number of Job Titles Held By Municipal Employees of New York State By County",
+    title = "The Number of Job Titles Held By Municipal Employees in New York State By County",
     fill = "New York State County Names"
   ) + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
@@ -557,7 +554,7 @@ number_job_titles_plot
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
 
-# Median Overtime Paid By New York State Counties Plot
+# Total Overtime Paid By New York State Counties Plot
 
 ``` r
 overtime_tibble = 
@@ -568,28 +565,27 @@ overtime_tibble =
 median_ot_paid_plot = 
     payroll_data |> 
     left_join(overtime_tibble, by = "county_name") |> 
-    ggplot(aes(x = reorder(county_name, median_total_ot_paid ), y = total_ot_paid,
-               fill = county_name)) +
+    ggplot(aes(x = reorder(county_name, median_total_ot_paid), y = total_ot_paid,
+    fill = county_name)) +
     geom_boxplot() +
-     scale_y_continuous(
-      labels = scales::comma,
-    limits = c(-5000, 32500),
-    breaks = seq(-5000, 32500, by = 5000)) +
+    scale_y_continuous(
+    labels = scales::comma,
+    limits = c(-5000, 27500),
+    breaks = seq(-5000, 27500, by = 7500)) +
     labs(
     x = "County Names",
-    y = "Total Overtime Paid",
-    title = "Total Overtime Paid By Each County",
+    y = "Total Overtime Paid ($)",
+    title = "Total Overtime Paid By Each County in New York State",
     fill = "New York State County Names"
   ) + 
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
-
 
 median_ot_paid_plot
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
 
-# Median Base Salary By Pay basis By New York State Counties (Annually) Plot
+# Base Salary By Annual Pay Basis By New York State Counties Plot
 
 ``` r
 pay_basis_tibble = 
@@ -608,11 +604,11 @@ Median_base_salary_plot_annually =
     scale_y_continuous(
       labels = scales::comma,
     limits = c(20000, 150000),
-    breaks = seq(20000, 150000, by = 10000)) +
+    breaks = seq(20000, 150000, by = 15000)) +
     labs(
     x = "County Names",
-    y = " Base Salary",
-    title = "Annual Median Base Salary For Each County", 
+    y = " Base Salary ($)",
+    title = "Base Salary For Annually-Paid Municipal Employees For Each New York State County", 
     fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
@@ -621,7 +617,7 @@ Median_base_salary_plot_annually
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-11-1.png" width="90%" />
 
-# Median Base Salary By Pay basis By New York State Counties (Daily) Plot
+# Base Salary By Daily Pay Basis By New York State Counties Plot
 
 ``` r
 pay_basis_daily_tibble = 
@@ -639,12 +635,12 @@ Median_base_salary_plot_daily =
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
-    limits = c(0,625),
-    breaks = seq(0, 625, by = 50)) +
+    limits = c(0,650),
+    breaks = seq(0, 650, by = 50)) +
     labs(
     x = "County Names",
-    y = " Base Salary",
-    title = "Daily Median Base Salary For Each County", 
+    y = " Base Salary ($)",
+    title = "Base Salary For Daily-Paid Municipal Employees For Each New York State County", 
     fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
@@ -653,16 +649,16 @@ Median_base_salary_plot_daily
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-12-1.png" width="90%" />
 
-# Median Base Salary By Pay basis By New York State Counties (Hourly) Plot
+# Base Salary By Hourly Pay Basis By New York State Counties Plot
 
 ``` r
-pay_basis_hourly_tibble= 
+pay_basis_hourly_tibble = 
     payroll_data %>%
     filter(pay_basis == "Hourly") |> 
     group_by(county_name) %>%
     summarise(median_base_salary_hourly = median(base_salary))
 
-Median_base_salary_plot_hourly =
+median_base_salary_plot_hourly =
     payroll_data %>%
     filter(pay_basis == "Hourly") |> 
     left_join(pay_basis_hourly_tibble,  by = "county_name") %>%
@@ -675,17 +671,17 @@ Median_base_salary_plot_hourly =
     breaks = seq(0,95, by = 10)) +
     labs(
     x = "County Names",
-    y = " Base Salary",
-    title = "Hourly Median Base Salary For Each County",
+    y = " Base Salary ($)",
+    title = "Base Salary For Hourly-Paid Municipal Employees For Each New York State County",
      fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
-Median_base_salary_plot_hourly
+median_base_salary_plot_hourly
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-13-1.png" width="90%" />
 
-# Median Base Salary By Pay basis By New York State Counties (Prorated) Plot
+# Base Salary By Prorated Pay Basis By New York State Counties Plot
 
 ``` r
 pay_basis_prorated_tibble = 
@@ -694,7 +690,7 @@ pay_basis_prorated_tibble =
     group_by(county_name) %>%
     summarise(median_base_salary_prorated = median(base_salary))  
     
-Median_base_salary_plot_prorated =
+median_base_salary_plot_prorated =
     payroll_data %>%
     filter(pay_basis == "Prorated Annual") |>
     left_join(pay_basis_prorated_tibble,  by = "county_name") %>%   
@@ -703,17 +699,17 @@ Median_base_salary_plot_prorated =
     geom_boxplot() +
     scale_y_continuous(
       labels = scales::comma,
-    limits = c(5000,85000),
-    breaks = seq(5000, 85000, by = 10000)) +
+    limits = c(10000,80000),
+    breaks = seq(10000, 80000, by = 10000)) +
     labs(
     x = "County Names",
-    y = " Base Salary",
-    title = "Prorated Annual Median Base Salary For Each County",
+    y = " Base Salary ($)",
+    title = "Base Salary For Prorated-Annually-Paid Municipal Employees For Each New York State County",
     fill = "New York State County Names"
   ) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 
-Median_base_salary_plot_prorated
+median_base_salary_plot_prorated
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-14-1.png" width="90%" />
@@ -753,8 +749,8 @@ job_frequency_plot =
     limits = c(0, 120000),
     breaks = seq(0, 120000, by = 10000)) +
   labs(
-    x = "Top 10 Job Titles",
-    y = "Frequency of Job Titles",
+    x = "Job Titles",
+    y = "Number of Municipal Employees",
     title = "The Top 10 Job Titles Held By Municipal Employees Throughout the Counties in New York State",
     fill = "New York State County Names"
   ) +
@@ -806,7 +802,7 @@ top_plot
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
 
-# Plot for Top 10 Job Titles Throughout the New York County
+# Plot for Top 10 Job Titles Throughout New York County
 
 ``` r
 job_frequency_newyork =
@@ -835,18 +831,16 @@ job_frequency_newyork_data =
     
 job_frequency_newyork_plot =
     job_frequency_newyork_data %>%
-    ggplot(aes(x = reorder(job_title, job_frequency), y = job_frequency, fill = county_name)) +
+    ggplot(aes(x = reorder(job_title, job_frequency), y = job_frequency)) +
   geom_bar(position = "dodge", stat = "identity") + 
     scale_y_continuous(
       labels = scales::comma,
     limits = c(0, 120000),
-    breaks = seq(0, 120000, by = 10000)) +
+    breaks = seq(0, 120000, by = 20000)) +
   labs(
-    x = "Top 10 Job Titles",
-    y = "Frequency of Job Titles",
-    title = "The Top 10 Job Titles Held By Municipal Employees in New York County",
-    fill = "New York State County Names"
-  ) +
+    x = "Job Titles",
+    y = "Number of Municipal Employees",
+    title = "The Top 10 Job Titles Held By Municipal Employees in New York County") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
 job_frequency_newyork_plot
@@ -874,27 +868,20 @@ job_frequency_albany_data =
     job_frequency_albany %>%
     top_n(job_frequency, n = 10) %>%
     mutate(
-     job_title = recode(job_title, "TEACHER- PER SESSION" = "TEACHER PER SESSION"),
-     job_title = recode(job_title, "ANNUAL ED PARA" = "EDUCATION PARAPROFESSIONAL"),
-     job_title = recode(job_title, "TEACHER SPECIAL EDUCATION" = "SPECIAL EDUCATION TEACHER"),
-     job_title = recode(job_title, "TEACHER-GENERAL ED" = "GENERAL EDUCATION TEACHER"),
-     job_title = recode(job_title, "SUBSTITUTE ED PARA" = "SUBSTITUTE EDUCATION PARAPROFESSIONAL"),
-     job_title = recode(job_title, "F/T SCHOOL AIDE" = "SCHOOL AIDE"))
+     job_title = recode(job_title, "ASST DIR OF INTERGVNMENTAL RELTNS FOR THE ALBANY OFFICE" = "ASSISTANT DIRECTOR OF INTERGOVERNMENTAL RELATIONS"))
     
 job_frequency_albany_plot =
     job_frequency_albany_data %>%
-    ggplot(aes(x = reorder(job_title, job_frequency), y = job_frequency, fill = county_name)) +
+    ggplot(aes(x = reorder(job_title, job_frequency), y = job_frequency)) +
   geom_bar(position = "dodge", stat = "identity") + 
     scale_y_continuous(
       labels = scales::comma,
     limits = c(0, 5),
     breaks = seq(0, 5, by = 1)) +
   labs(
-    x = "Top 10 Job Titles",
-    y = "Frequency of Job Titles",
-    title = "The Top 10 Job Titles Held By Municipal Employeesin Albany County",
-    fill = "New York State County Names"
-  ) +
+    x = "Job Titles",
+    y = "Number of Municipal Employees",
+    title = "The 6 Job Titles Held By Municipal Employees In Albany County") +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
 
 job_frequency_albany_plot
