@@ -9,7 +9,7 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
+    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
     ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
@@ -1045,3 +1045,141 @@ sums, meal allowance, settlement amounts, differentials, uniform
 allowance, retroactive pay increases, and bonus pay. These other forms
 of payment would explain why there are negative values for this
 variable.
+
+Motivation:
+
+New York City (NYC) is recognized as having the largest city and
+regional economies in the United States (Wikipedia, 2022). If New York
+City were an individual country, it would be ranked as the 10th largest
+global economy (Wikipedia, 2022). Our motivation for this project is to
+use the skills that we have learned in Data Science I and apply them to
+answer imperative questions about NYC, such as which NYC borough yields
+the highest and lowest average total pay, which would combine salary,
+overtime, and other pay, in 2022 from data related to New York City’s
+budget on the salaries and overtime pay of municipal employees. Cities
+around the country suffered greatly from the worst pandemic hit and the
+prospects of a recession began stirring fears of what the next couple of
+years will hold.Cities are more cautious about spending its budget
+compared to the previous years in response to COVID -19. As a result,
+many states and municipalities have made cuts, frozen spending and
+hiring, laid off workers and cut down the funds. Our project is to
+provide a visualization on how the City’s budget is being spent on
+salary and for the interest of the public as well as for those recent
+graduates looking for opportunities in City jobs, New York by conducting
+statistical analysis to evaluate the significant differences in base
+salary counties.
+
+Related work:
+
+In 2022, the economy is trying to get back to normalcy, however, the
+challenge is continuing to be present in various sectors (1). According
+to Omeyr, “Governments are being super cautious and very conservative
+when it comes to budgeting for the near future and for fiscal year 2022
+and 2023. The New York State Budget will total \$220.5 billion in
+2022-23. The Budget was adopted following two years of extraordinary
+volatility in State finances that began with the unprecedented economic
+disruptions caused by the COVID-19 pandemic and the prospect of steep
+revenue shortfalls. Due to Economic performance suppression,
+unanticipated revenues were generated and spending as increased greatly,
+both for temporary investments for pandemic-related needs and expanded
+or new commitments to existing programs (3). Allocating a budget on the
+payroll is one of the state’s duties. The data is from the NYC Open data
+and it was collected because NYC residents were interested in how the
+City’s budget is being allocated on salary and overtime pay for
+municipal employees. This dataset is by the Office of Payroll
+Administration(OPA).  
+According to the Bureau of Labor Statistics (BLS), the median wage for
+workers in the United States in the second quarter of 2022 was about
+\$1,041 per week or \$54,132 per year (assuming 52 weeks of work per
+year). Wages were 5.2% higher than a year earlier (5). Number reports on
+statistics have stated that the employment increased in all five New
+York City boroughs from March 2021 to March 2022, the U.S. The Bureau of
+Labour Statistics reported (2). Although most New York residents earned
+incomes at least 400 percent of the federal poverty level (FPL), its
+median annual household income between 2011 and 2013 was lowest among
+its neighboring states, \$51,962. The state had the highest proportion
+of residents who earned incomes below 100 percent of the FPL(4).
+Apparently this pattern has persisted throughout the years. It has
+proven in our data that the average base salary for municipal employees
+of New York county was among one of the lowest.
+
+(<https://www.route-f>
+ifty.com/finance/2022/10/cities-recover-financial-worries-loom/378358/)
+<https://www.bls.gov/regions/new-york-new-jersey/news-release/countyemploymentandwages_newyorkcity.htm>
+<https://www.osc.state.ny.us/reports/state-fiscal-year-2022-23-enacted-budget-analysis>
+<https://ballotpedia.org/New_York_state_budget_and_finances>
+<https://www.thebalancemoney.com/average-salary-information-for-us-workers-2060808#>:\~:text=Median%20Salary%20Information%20for%20U.S.,higher%20than%20a%20year%20earlier.
+
+Exploratory analysis:
+
+Box plot was created to illustrate the differences in the median base
+salary by annually, daily, hourly, and based on prorated for all New
+York state counties .
+
+Figure(1) shows the annual median base salary for municipal employees of
+New York State by county. According to this Figure(1), Orange, Greene,
+Putnam and Bronx has the lowest median base salary around 60,000 for its
+municipal employees, whereas Albany has the highest median base salary
+with around 85, 000 USD followed by New York county. Compared to the
+mean base salary, median base salary in New York States was
+significantly higher and placed second from the top after Albany, which
+was similar to our hypothesis that New York County would have a higher
+income level.
+
+Figure(2) shows the daily median base salary for municipal employees of
+New York State by county. The daily median salary ranged between 50 to
+65 dollars. Figure b illustrates that Bronx, Delaware, Queens and Ulster
+have the lowest daily median base salary which was around 350 dollars
+while Albany, Dutchess and Greene ranked highest with 500 dollars. The
+rest of the counties placed in between above values. Daily median base
+salary for New York County has many outliers indicating that median
+values are not suitable to compute since the range of the daily base
+salary varied greatly.
+
+Figure(3) illustrates hourly median base salary for municipal employees
+of New York State by county. The hourly median salary ranged between 0
+to 95 dollars. Figure 3 illustrates that New York County has the lowest
+hourly median base salary with 0 dollars while Nassau ranked highest
+around 65 to 70 dollars followed by Dutchess and Sullivan, Schoharie
+respectivly. It shows that highly populated counties have lower hourly
+median base salary compared to less populated counties.
+
+Figure(4) displays prorated median base salary for municipal employees
+of New York State by county. A prorated salary is when an employee gets
+paid based on the number of hours or days they work in a pay period,
+instead of their regular salary. When compared to annual median base
+salary, prorated median base salary was highest for Ulster followed by
+New York Country where Bronx and Richmond ranked the lowest. This
+indicates that employees in Ulster and New York Counties work longer
+hours and with extra days. This finding is in line with our hypothesis
+that the Median Base Salary for New York County was higher according to
+its prorated values.
+
+Median total overtime pay for municipal employees in New York State by
+its counties in 2022 is displayed in the boxplot. Figure (5) illustrated
+that New York county was among the lowest median counties for total
+overtime along with Albany, Nassau, New York and Orange which was close
+to 0 dollars, while Greene ranked highest median for total overtime pay
+with around 7000 dollars. This pattern is similar to that of New York
+County for median for total other pay where it placed the lowest.
+(graphic). We assumed that since New York County has a big market with
+more opportunities and its hard working lifestyle will allow employees
+to benefit more from overtime pay. This finding contracted with our
+hypothesis and median for prorated annual base salary (figure 4) where
+New York County ranked highest. In addition, it was noticeable that New
+York county has the greatest number of outliers, which may be due to the
+large population within this county whereas Greene, Orange and Dutchess
+counties did have outliers.
+
+Furthermore, an exploratory analysis on top jobs for New York County and
+Anbany was conducted to comprehend our earlier analysis on Mean base
+salary where New York county ranked second lowest from mean base salary
+while Albany ranked highest (Fig1). We assumed that the top ten job
+titles would explain this finding. Based on Figure 6,7 , the top ten job
+titles in New York County are community associate, school aide, police
+officer, substitute education, election worker, teacher and Teacher Per
+Session. However, there were only 6 top titles in Albany, which are
+supervisor, assistant director, special assistant, watershed maintainer,
+assistant legislative representative. As we expected these top job
+titles explained our main finding on mean salary that top 6 job titles
+were higher rank jobs as compared to New York County.
