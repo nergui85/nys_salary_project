@@ -65,63 +65,83 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 head(payroll_data)
 ```
 
-# Pie Chart for the percentages and numbers of the different leave statuses
+# Pie Chart for Percentages of Municipal Employees by Leave Status Across All Counties Plot
 
 ```{r}
-
 Total_ls = table(pull(payroll_data,leave_status))
 
 Total_ls
-
 
 labels = c("Active", "Ceased", "On Leave")
 
 piepercent = round(100 * Total_ls / sum(Total_ls), 1)
 
 par(xpd = TRUE) 
+
 pie(Total_ls, labels = paste(labels, sep = " ", piepercent, "%"),
-    main = "Percentages of Municipal Employees by Leave Status", col = viridis(length(Total_ls)))
+    main = "Percentages of Municipal Employees by Leave Status Across All Counties", col =       viridis(length(Total_ls)))
 legend("topright", c("Active", "Ceased", "On Leave"),cex = 0.9, fill = viridis(length(Total_ls)))
 ```
 
-# Bar Graph for number of employees by municipality separated by leave status
+# Bar Graph for the Number of Municipal Employees by Leave Status in New York State Plot
 
 ```{r}
-
-Ls_bar = payroll_data %>%
+Ls_bar = 
+  payroll_data %>%
   group_by(leave_status) %>%
   summarise(
-    count = n())
+    count = n()
+    )
 
-ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + geom_bar(position = "dodge", stat = "identity") + labs(title = "The Number of Employees by Municipality Separated  by Leave Status", x = "Leave Status", y = "Number of Employees") + scale_y_continuous(labels = scales::comma)
-
+ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + 
+geom_bar(position = "dodge", stat = "identity") + 
+labs(
+    title = "The Number of Municipal Employees by Leave Status in New York State",
+    x = "Leave Status", 
+    y = "Number of Municipal Employees", 
+    fill = "Leave Status" 
+    ) + 
+scale_y_continuous(labels = scales::comma)
 ```
 
-# ANOVA and Tukey's Test
+# ANOVA Analysis
 
-#Null Hypothesis(Ho) = The mean base salary is constant for all counties
-#H1 = The mean base salary is different for all municipalities
+Null Hypothesis(Ho) = The mean base salary is constant for all counties
+
+Alternative Hypothesis(H1) = The mean base salary is different for all municipalities
+
 ```{r}
-bs_model = payroll_data %>%
+ms_model = 
+  payroll_data %>%
   mutate(county_name = as.factor(county_name)) %>%
   group_by(county_name) %>%
-  summarise(bs_mean = base_salary)
+  summarise(ms_mean = base_salary)
 
+res = lm(ms_mean ~ factor(county_name), data = ms_model)
 
-res = lm(bs_mean ~ factor(county_name), data = bs_model)
-res
-anova(res) %>% broom::tidy() %>% knitr::kable(caption = "One Way Anova Test for Mean Salary by County")
+anova_analysis = 
+    anova(res) %>% 
+    broom::tidy() %>% 
+    knitr::kable(caption = "One Way Anova Test for Mean Salary by County")
+
+anova_analysis
 ```
 
+# Tukey test for Mean Salary by County
 
-#Tukey test for Mean Salary by County
 ```{r}
-res1 = aov(bs_mean ~ factor(county_name), data = bs_model)
-Tukey_bs = TukeyHSD(res1)
-Tukey_bs
+res1 = aov(ms_mean ~ factor(county_name), data = ms_model)
 
-Tukey_bs %>%broom::tidy() %>% knitr::kable(caption = "Tukey Test for Mean Salary by County")
+tukey_ms = TukeyHSD(res1)
 
+tukey_ms
+
+tukey_table = 
+    tukey_ms %>% 
+    broom::tidy() %>%
+    knitr::kable(caption = "Tukey Test for Mean Salary by County")
+
+tukey_table
 ```
 
 # Mean Base Salary By New York State Counties Plot
@@ -384,3 +404,36 @@ job_frequency_plot =
 job_frequency_plot
 ```
 
+# The Top Five Job Titles Held by Municipal Employees in Six New York State Counties Plot
+
+```{r}
+top5_freq = 
+  payroll_data %>%
+   filter(county_name %in% c("NEW YORK", "KINGS", "BRONX", "QUEENS", "RICHMOND","ALBANY")) %>%
+   group_by(county_name, job_title) %>%
+   summarise(number_of_people = n()) %>%
+   arrange(desc(number_of_people)) %>%
+   slice(1:5)
+
+top5_freq_n = 
+  top5_freq %>%
+   mutate(
+     job_title = as.factor(job_title),
+     job_title = recode(job_title, "TEACHER- PER SESSION" = "TEACHER PER SESSION"),
+     job_title = recode(job_title, "ANNUAL ED PARA" = "EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "TEACHER SPECIAL EDUCATION" = "SPECIAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "ASST DIR OF INTERGVNMENTAL RELTNS FOR THE ALBANY OFFICE" = "ASSISTANT DIRECTOR OF INTERNATIONAL RELATIONS"),
+     job_title = recode(job_title, "EMERGENCY MEDICAL SPECIALIST-EMT" = "EMT"))
+ 
+top_plot = 
+  ggplot(top5_freq_n, aes(x = reorder(job_title, number_of_people), y = number_of_people)) + geom_point(aes(color = county_name), alpha = 0.5) + 
+scale_y_continuous(
+  labels = scales::comma,
+  limits = c(0,120000),
+  breaks = seq(0, 120000, by = 15000)) + 
+labs(title = "The Top Five Job Titles Held by Municipal Employees in Six New York State Counties",x = "Job Title", y = "Number of Municipal Employees")  + 
+  guides(color = guide_legend(title = "New York State County Names")) +
+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+top_plot
+```

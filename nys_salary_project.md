@@ -11,7 +11,7 @@ library(tidyverse)
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
     ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-    ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
+    ## ✔ tidyr   1.2.0      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
     ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
@@ -89,7 +89,7 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
     ## ── Column specification ────────────────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (9): Agency Name, Last Name, First Name, Mid Init, Agency Start Date, Wo...
-    ## dbl (2): Fiscal Year, Payroll Number
+    ## dbl (8): Fiscal Year, Payroll Number, Base Salary, Regular Hours, Regular Gr...
     ## 
     ## ℹ Use `spec()` to retrieve the full column specification for this data.
     ## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
@@ -111,7 +111,7 @@ head(payroll_data)
     ## #   ¹​agency_name, ²​start_year, ³​base_salary, ⁴​pay_basis, ⁵​total_ot_paid,
     ## #   ⁶​total_other_pay, ⁷​leave_status, ⁸​county_name
 
-# Pie Chart for the percentages and numbers of the different leave statuses
+# Pie Chart for Percentages of Municipal Employees by Leave Status Across All Counties Plot
 
 ``` r
 Total_ls = table(pull(payroll_data,leave_status))
@@ -129,70 +129,64 @@ labels = c("Active", "Ceased", "On Leave")
 piepercent = round(100 * Total_ls / sum(Total_ls), 1)
 
 par(xpd = TRUE) 
+
 pie(Total_ls, labels = paste(labels, sep = " ", piepercent, "%"),
-    main = "Percentages of Municipal Employees by Leave Status", col = viridis(length(Total_ls)))
+    main = "Percentages of Municipal Employees by Leave Status Across All Counties", col =       viridis(length(Total_ls)))
 legend("topright", c("Active", "Ceased", "On Leave"),cex = 0.9, fill = viridis(length(Total_ls)))
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
 
-# Bar Graph for number of employees by municipality separated by leave status
+# Bar Graph for the Number of Municipal Employees by Leave Status in New York State Plot
 
 ``` r
-Ls_bar = payroll_data %>%
+Ls_bar = 
+  payroll_data %>%
   group_by(leave_status) %>%
   summarise(
-    count = n())
+    count = n()
+    )
 
-ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + geom_bar(position = "dodge", stat = "identity") + labs(title = "The Number of Employees by Municipality Separated  by Leave Status", x = "Leave Status", y = "Number of Employees") + scale_y_continuous(labels = scales::comma)
+ggplot(Ls_bar, aes(x = leave_status, y = count, fill = leave_status)) + 
+geom_bar(position = "dodge", stat = "identity") + 
+labs(
+    title = "The Number of Municipal Employees by Leave Status in New York State",
+    x = "Leave Status", 
+    y = "Number of Municipal Employees", 
+    fill = "Leave Status" 
+    ) + 
+scale_y_continuous(labels = scales::comma)
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />
 
-# ANOVA and Tukey’s Test
+# ANOVA Analysis
 
-\#Null Hypothesis(Ho) = The mean base salary is constant for all
-counties \#H1 = The mean base salary is different for all municipalities
+Null Hypothesis(Ho) = The mean base salary is constant for all counties
+
+Alternative Hypothesis(H1) = The mean base salary is different for all
+municipalities
 
 ``` r
-bs_model = payroll_data %>%
+ms_model = 
+  payroll_data %>%
   mutate(county_name = as.factor(county_name)) %>%
   group_by(county_name) %>%
-  summarise(bs_mean = base_salary)
+  summarise(ms_mean = base_salary)
 ```
 
     ## `summarise()` has grouped output by 'county_name'. You can override using the
     ## `.groups` argument.
 
 ``` r
-res = lm(bs_mean ~ factor(county_name), data = bs_model)
-res
-```
+res = lm(ms_mean ~ factor(county_name), data = ms_model)
 
-    ## 
-    ## Call:
-    ## lm(formula = bs_mean ~ factor(county_name), data = bs_model)
-    ## 
-    ## Coefficients:
-    ##                    (Intercept)        factor(county_name)BRONX  
-    ##                         104555                          -46794  
-    ##    factor(county_name)DELAWARE     factor(county_name)DUTCHESS  
-    ##                         -37029                          -46796  
-    ##      factor(county_name)GREENE        factor(county_name)KINGS  
-    ##                         -44973                          -41916  
-    ##      factor(county_name)NASSAU     factor(county_name)NEW YORK  
-    ##                         -71164                          -61725  
-    ##      factor(county_name)ORANGE       factor(county_name)PUTNAM  
-    ##                         -44452                          -40565  
-    ##      factor(county_name)QUEENS     factor(county_name)RICHMOND  
-    ##                         -42864                          -43923  
-    ##   factor(county_name)SCHOHARIE     factor(county_name)SULLIVAN  
-    ##                         -35125                          -31242  
-    ##      factor(county_name)ULSTER  factor(county_name)WESTCHESTER  
-    ##                         -27363                          -33863
+anova_analysis = 
+    anova(res) %>% 
+    broom::tidy() %>% 
+    knitr::kable(caption = "One Way Anova Test for Mean Salary by County")
 
-``` r
-anova(res) %>% broom::tidy() %>% knitr::kable(caption = "One Way Anova Test for Mean Salary by County")
+anova_analysis
 ```
 
 | term                |     df |        sumsq |       meansq | statistic | p.value |
@@ -202,18 +196,20 @@ anova(res) %>% broom::tidy() %>% knitr::kable(caption = "One Way Anova Test for 
 
 One Way Anova Test for Mean Salary by County
 
-\#Tukey test for Mean Salary by County
+# Tukey test for Mean Salary by County
 
 ``` r
-res1 = aov(bs_mean ~ factor(county_name), data = bs_model)
-Tukey_bs = TukeyHSD(res1)
-Tukey_bs
+res1 = aov(ms_mean ~ factor(county_name), data = ms_model)
+
+tukey_ms = TukeyHSD(res1)
+
+tukey_ms
 ```
 
     ##   Tukey multiple comparisons of means
     ##     95% family-wise confidence level
     ## 
-    ## Fit: aov(formula = bs_mean ~ factor(county_name), data = bs_model)
+    ## Fit: aov(formula = ms_mean ~ factor(county_name), data = ms_model)
     ## 
     ## $`factor(county_name)`
     ##                                diff          lwr           upr     p adj
@@ -339,7 +335,12 @@ Tukey_bs
     ## WESTCHESTER-ULSTER     -6500.013271  -17481.9764   4481.949811 0.8099179
 
 ``` r
-Tukey_bs %>%broom::tidy() %>% knitr::kable(caption = "Tukey Test for Mean Salary by County")
+tukey_table = 
+    tukey_ms %>% 
+    broom::tidy() %>%
+    knitr::kable(caption = "Tukey Test for Mean Salary by County")
+
+tukey_table
 ```
 
 | term                | contrast              | null.value |      estimate |     conf.low |     conf.high | adj.p.value |
@@ -754,3 +755,44 @@ job_frequency_plot
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-15-1.png" width="90%" />
+
+# The Top Five Job Titles Held by Municipal Employees in Six New York State Counties Plot
+
+``` r
+top5_freq = 
+  payroll_data %>%
+   filter(county_name %in% c("NEW YORK", "KINGS", "BRONX", "QUEENS", "RICHMOND","ALBANY")) %>%
+   group_by(county_name, job_title) %>%
+   summarise(number_of_people = n()) %>%
+   arrange(desc(number_of_people)) %>%
+   slice(1:5)
+```
+
+    ## `summarise()` has grouped output by 'county_name'. You can override using the
+    ## `.groups` argument.
+
+``` r
+top5_freq_n = 
+  top5_freq %>%
+   mutate(
+     job_title = as.factor(job_title),
+     job_title = recode(job_title, "TEACHER- PER SESSION" = "TEACHER PER SESSION"),
+     job_title = recode(job_title, "ANNUAL ED PARA" = "EDUCATION PARAPROFESSIONAL"),
+     job_title = recode(job_title, "TEACHER SPECIAL EDUCATION" = "SPECIAL EDUCATION TEACHER"),
+     job_title = recode(job_title, "ASST DIR OF INTERGVNMENTAL RELTNS FOR THE ALBANY OFFICE" = "ASSISTANT DIRECTOR OF INTERNATIONAL RELATIONS"),
+     job_title = recode(job_title, "EMERGENCY MEDICAL SPECIALIST-EMT" = "EMT"))
+ 
+top_plot = 
+  ggplot(top5_freq_n, aes(x = reorder(job_title, number_of_people), y = number_of_people)) + geom_point(aes(color = county_name), alpha = 0.5) + 
+scale_y_continuous(
+  labels = scales::comma,
+  limits = c(0,120000),
+  breaks = seq(0, 120000, by = 15000)) + 
+labs(title = "The Top Five Job Titles Held by Municipal Employees in Six New York State Counties",x = "Job Title", y = "Number of Municipal Employees")  + 
+  guides(color = guide_legend(title = "New York State County Names")) +
+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1)) 
+
+top_plot
+```
+
+<img src="nys_salary_project_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
