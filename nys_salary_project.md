@@ -9,7 +9,7 @@ library(tidyverse)
 ```
 
     ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-    ## ✔ ggplot2 3.4.0      ✔ purrr   0.3.4 
+    ## ✔ ggplot2 3.3.6      ✔ purrr   0.3.4 
     ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
     ## ✔ tidyr   1.2.1      ✔ stringr 1.4.1 
     ## ✔ readr   2.1.2      ✔ forcats 0.5.2 
@@ -901,3 +901,147 @@ job_frequency_albany_plot
 ```
 
 <img src="nys_salary_project_files/figure-gfm/unnamed-chunk-18-1.png" width="90%" />
+
+Report
+
+Data:
+
+The data that was used for this project is from a NYC Open Data webpage
+(hyperlink this) entitled “Citywide Payroll Data (Fiscal Year)”. It was
+collected with the purpose of understanding how New York City’s budget
+is utilized on salary and overtime pay for all municipal employees.
+However, it is important to note that the data contains information
+pertaining to municipal employees throughout various counties in New
+York State. This source of data is updated annually and was last updated
+on October 28, 2022.
+
+The raw data consisted of 5,109,775 rows and 17 columns, which were
+fiscal year, payroll number, the name of the agency, last name of the
+employee, first name of the employee, middle initial of the employee,
+the date that the employee started working for the agency, the borough
+of the employee’s primary work location, the civil service title
+description, the leave status of the employee at the end of the fiscal
+year on June 30th, the base salary of the employee, pay basis, the
+number of regular hours that the employee worked in the fiscal year, the
+amount paid to the employee for base salary during the fiscal year,
+overtime hours worked by the employee during the fiscal year, the total
+overtime pay that was paid to the employee in the fiscal year, and total
+other pay. The borough of the employee’s primary work location variable
+are counties throughout New York State instead of just being the five
+boroughs in New York City. The pay basis is whether is the employee was
+paid by hour, per diem, or annually. The total other pay variable is any
+financial compensation in addition to overtime pay and gross salary,
+which would include lump sums, meal allowance, settlement amounts,
+differentials, uniform allowance, retroactive pay increases, and bonus
+pay. This data does not show salary increases that are received during
+any one fiscal year.
+
+The data was read into R as a .csv file using the “read_csv” function.
+All of the variable names were then changed to lowercase and an
+underscore was used between spaces by using the “clean_names” function.
+We then filtered the data to only include records from the fiscal year
+of 2022. We also filtered the data to remove records containing “NA”,
+“OTHER”, and “WASHINGTON DC” for the “work_location_borough” variable.
+In addition, we also filtered the data to remove records consisting of
+“ON SEPARATION LEAVE” and “SEASONAL” for the
+“leave_status_as_of_june_30” variable, and removed records containing
+“NA” for the “title_description” variable. The “agency_start_date”
+variable, which is the date that the employee started at the agency, was
+separated into three variables, “month”, “day”, and “start_year”. The
+variables “leave_status_as_of_june_30”, “work_location_borough”, and
+“title_description” were duplicated and renamed into “leave_status”,
+“county_name”, and “job_title”, respectively. The records containing
+“per Annum”, “per Day”, and “per Hour” for the pay basis variable were
+recoded into “Annually”, “Daily”, and “Hourly”, respectively. The
+records containing “MANHATTAN” and “BROOKLYN” for the county name
+variable were recoded into “New York” and “Kings”, respectively. The
+variables of payroll number, first name of the employee, last name of
+the employee, middle initial of the employee, month of the employee’s
+start date, day of the employee’s start date, the duplicated
+“leave_status_as_of_june_30”, the duplicated “work_location_borough”,
+the number of regular hours that the employee worked in the fiscal year,
+the amount paid to the employee for base salary during the fiscal year,
+and the overtime hours worked by the employee during the fiscal year
+were then removed from the data. The variables for county name, pay
+basis, and leave status were changed from a character data type to a
+factor. The variable for “title_description” was then duplicated and
+renamed into “job_title”. The duplicated “title_description” variable
+was then removed from the data. The data that was cleaned resulted in
+594,234 records and 10 columns.
+
+Exploratory Analysis:
+
+Exploratory analysis for our primary outcome of whether there is a
+significant difference in the mean base salary of employees in New York
+State by county in 2022 was conducted by creating a bar graph (Figure
+1). Figure 1 shows the average base salary for municipal employees of
+New York State by county. This figure illustrates that Albany county has
+the highest mean base salary for its municipal employees, while Nassau
+county has the lowest average base salary and New York county has the
+second lowest mean base salary. All of the other counties have similar
+average base salaries. However, we hypothesized that New York county
+would have the highest mean salary as it serves as a major financial
+center within the United States compared to Albany county, which is the
+capital of New York State.
+
+We also performed exploratory analysis by investigating the number of
+job titles that are held by municipal employees in New York State by
+county in 2022 through a bar graph (Figure 2). Figure 2 conveys the
+number of job titles that are held by employees within each of the 16
+counties in New York State. This figure demonstrates that Orange county
+has the lowest number of job titles, while Albany has the third lowest
+number of job titles. It is important to note that each of the five
+boroughs in New York City are among the counties that have the five
+highest counts of job titles that are held by municipal employees in
+2022: New York county has the highest, which was expected; Queens county
+has the second highest number; Kings county has the third highest
+number; Bronx has the fourth highest number; Richmond has the fifth
+highest number. We did expect that New York county would have the
+highest number of job titles held by municipal employees and we also
+expected that the other boroughs of New York City would also have among
+the highest counts due to the large size of the populations within each
+of these counties within New York City. All of the other counties within
+New York State may have low frequencies of job titles that are held by
+municipal workers in 2022, because of their smaller population sizes.
+
+Furthermore, an exploratory analysis was conducted to comprehend the top
+ten job titles that are held by municipal workers throughout the
+counties in New York State in 2022 through a bar graph (Figure 3). Based
+on Figure 3, the top ten job titles by frequency are Correction Officer,
+School Aide, Police Officer, Substitute Education Paraprofessional,
+General Education Teacher, Special Education Teacher, Education
+Paraprofessional, Election Worker, Teacher, and Teacher Per Session,
+respectively in ascending order. The top 9 job titles by frequency were
+in New York county with Teacher Per Session being the job title with the
+highest frequency. The job title with the 10th highest frequency was in
+Queens county and was a Correction Officer. We did predict that one of
+the teacher job titles would be the job title with the highest
+frequency, but we did not expect that it would be the Teacher Per
+Session job title. We also expected that all of the top 10 job titles
+with the highest frequencies would be in New York County. Overall, this
+figure supports some of our predictions and illustrates that the job
+title with the highest frequency in Queens is a Correction Officer.
+
+An exploratory analysis was performed to understand the median total
+other pay for municipal employees throughout New York State by county in
+2022 through a boxplot (Figure 4). Figure 4 demonstrates that New York
+county has the lowest median for total other pay, which is relatively
+close to 0 dollars, while Schoharie county has the highest median for
+total other pay, which is relatively above 5000 dollars for municipal
+workers. We did not expect New York county to have the lowest median for
+total other pay, but instead be one of the counties with the highest
+median for total other pay due to the large population and number of job
+titles within this county (Figure 2). All of the other counties have
+relatively similar medians for total other pay in 2022. It is also
+important to note that New York county has the greatest number of
+outliers, which may be due to the large population within this county.
+Based on figure 3, Queens, Bronx, and Kings counties also have high
+numbers of outliers, which may also be due to the large populations
+within these counties. There are counties that do not have any outliers,
+such as Sullivan, Delaware, Greene, and Orange counties. This figure
+also illustrates that there are employees in some of the counties that
+have negative values for other types of pay, which can include lump
+sums, meal allowance, settlement amounts, differentials, uniform
+allowance, retroactive pay increases, and bonus pay. These other forms
+of payment would explain why there are negative values for this
+variable.
